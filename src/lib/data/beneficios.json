@@ -1,0 +1,32 @@
+[
+  {
+    "nombre_comercial": "Sonría Av. 68",
+    "nombre_descuento": "50% de descuento en blanqueamientos",
+    "descripcion_descuento": "¡Sonría Av. 68 te da la bienvenida con una sonrisa más brillante! Si nos visitas por primera vez, disfruta de un 50% de descuento en nuestro servicio de blanqueamiento dental de alta calidad. Agenda tu cita y comienza tu experiencia con una valoración profesional y el tratamiento que te dejará una sonrisa espectacular a mitad de precio.",
+    "condiciones": "Válido solo para clientes de primera vez en Sonría Av. 68. Aplica únicamente al servicio de blanqueamiento dental. La cita incluye valoración profesional. Descuento no acumulable con otras promociones. Sujeto a disponibilidad de agenda.",
+    "tipo_promocion": "50%",
+    "link_promocion": "https://api.whatsapp.com/send?phone=573222721452&text=%C2%A1Hola%20Sonr%C3%ADa!%20Quiero%20conocer%20la%20promoci%C3%B3n%20",
+    "image": "/images/promotions/sonria.jpg",
+    "banner": "/images/promotions/sonria-banner.jpg"
+  },
+  {
+    "nombre_comercial": "Unidad Odontofacial",
+    "nombre_descuento": "60% de descuento en valoracion y limpieza",
+    "descripcion_descuento": "¡Transforma tu sonrisa con Unidad Odontofacial! Aprovecha un increíble 60% de descuento en tu valoración profesional y limpieza dental completa. Obtén un diagnóstico preciso y una limpieza profunda para empezar a cuidar tu salud oral con los mejores expertos.",
+    "condiciones": "Válido únicamente en Unidad Odontofacial. Aplica un 60% de descuento sobre el precio regular de la valoración profesional y la limpieza dental completa. El descuento es aplicable una sola vez por cliente. Sujeto a disponibilidad de agenda. No acumulable con otras promociones o descuentos.",
+    "tipo_promocion": "60%",
+    "link_promocion": "https://api.whatsapp.com/send?phone=573108743839&text=Hola!%20Quiero%20m%C3%A1s%20informaci%C3%B3n",
+    "image": "/images/promotions/unidad.jpg",
+    "banner": "/images/promotions/unidad-banner.jpg"
+  },
+  {
+    "nombre_comercial": "Dentix Bogotá Andino",
+    "nombre_descuento": "30% de descuento en blanqueamiento dental",
+    "descripcion_descuento": "¡Ilumina tu sonrisa con Dentix Bogotá Andino! Aprovecha un 30% de descuento en tu tratamiento profesional de blanqueamiento dental. Consigue la sonrisa que siempre has deseado con nuestros expertos.",
+    "condiciones": "Promoción valida Del 1 al 28 de febrero del 2026. Aplica 30% de descuento en tratamientos de blanqueamiento dental profesional. El descuento se aplica sobre el valor total del tratamiento al momento de la compra y facturación del 100%. No acumulable con otros descuentos o promociones. No aplica para pagos parciales. Los beneficios no se suman en un mismo procedimiento, pero sí pueden combinarse con campañas vigentes en tratamientos diferentes. No acumulable con financiación DFS, Welli Tasa Cero. Aplican condiciones y restricciones.",
+    "tipo_promocion": "30%",
+    "link_promocion": "",
+    "image": "/images/promotions/dentix.jpg",
+    "banner": "/images/promotions/dentix-banner.jpg"
+  }
+]
