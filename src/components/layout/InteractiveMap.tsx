@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useEffect } from 'react'
 import { GoogleMap, useJsApiLoader, Marker, InfoWindow } from '@react-google-maps/api'
 import type { Provider } from '@/types/provider'
 import { Star, MapPin } from 'lucide-react'
@@ -27,9 +27,35 @@ export function InteractiveMap({ providers, center: defaultCenter }: Interactive
     const [map, setMap] = useState<google.maps.Map | null>(null)
     const [selectedProvider, setSelectedProvider] = useState<Provider | null>(null)
 
-    const onUnmount = useCallback(function callback(map: google.maps.Map) {
+    const onUnmount = useCallback(function callback(_map: google.maps.Map) {
         setMap(null)
     }, [])
+
+    const [userLocation, setUserLocation] = useState<{ lat: number, lng: number } | null>(null)
+
+    // Request user location on component mount
+    useEffect(() => {
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const newLocation = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+                    setUserLocation(newLocation);
+                    // Center map dynamically if loaded
+                    if (map) {
+                        map.panTo(newLocation);
+                        map.setZoom(13);
+                    }
+                },
+                (error) => {
+                    console.error("Error obtaining geolocation:", error);
+                },
+                { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+            );
+        }
+    }, [map]);
 
     // Define center dynamically based on providers or fallback to Bogota
     const center = useMemo(() => {
@@ -62,21 +88,42 @@ export function InteractiveMap({ providers, center: defaultCenter }: Interactive
     return (
         <GoogleMap
             mapContainerStyle={containerStyle}
-            center={center}
-            zoom={12}
+            center={userLocation || center}
+            zoom={userLocation ? 13 : 12}
+            onLoad={setMap}
             onUnmount={onUnmount}
             options={{
                 disableDefaultUI: false, // Allows user controls
                 styles: [
                     { featureType: 'all', elementType: 'labels', stylers: [{ visibility: 'on' }] },
-                    { featureType: 'geometry', stylers: [{ color: '#f5f5f5' }] },
+                    { elementType: 'geometry', stylers: [{ color: '#f5f5f5' }] },
                     { featureType: 'water', stylers: [{ color: '#e9e9e9' }] }
                 ]
             }}
         >
+            {/* User Location Marker */}
+            {userLocation && (
+                <Marker
+                    position={userLocation}
+                    icon={{
+                        url: "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(`
+                            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="20" cy="20" r="14" fill="#10B981" fill-opacity="0.2"/>
+                                <circle cx="20" cy="20" r="8" fill="white" stroke="#10B981" stroke-width="2"/>
+                                <circle cx="20" cy="20" r="4" fill="#10B981"/>
+                            </svg>
+                        `),
+                        scaledSize: new window.google.maps.Size(40, 40),
+                        anchor: new window.google.maps.Point(20, 20)
+                    }}
+                    title="Tu Ubicación Actual"
+                    zIndex={100}
+                />
+            )}
+
             {/* Render a marker for each location of every provider */}
             {providers.map((provider) => (
-                provider.locations?.map((loc: any, idx: number) => {
+                provider.locations?.map((loc, idx: number) => {
                     if (!loc.lat || !loc.lng) return null;
                     const position = { lat: Number(loc.lat), lng: Number(loc.lng) }
 
