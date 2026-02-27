@@ -10,7 +10,9 @@ import { Search, MapPin, Star, ChevronRight, SlidersHorizontal, Map as MapIcon, 
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { ProviderCard } from "@/components/ui/provider-card"
+import type { Provider } from "@/types/provider"
 import Fuse from "fuse.js"
+import { InteractiveMap } from "@/components/layout/InteractiveMap"
 import {
     Select,
     SelectContent,
@@ -55,11 +57,8 @@ function DiscoverContent() {
 
     useEffect(() => {
         setSelectedProcedure("Todos")
-    }, [selectedCategory])
-
-    useEffect(() => {
         setSelectedCity("Todas")
-    }, [selectedDepartment])
+    }, [selectedCategory, selectedDepartment])
 
     // Derive dynamic filter options from data
     const dynamicDepartments = useMemo(() => {
@@ -124,7 +123,7 @@ function DiscoverContent() {
                 return countryMatch && deptMatch && cityMatch
             })
 
-            const matchesProcedure = selectedProcedure === "Todos" ? true : (provider as any).procedures?.includes(selectedProcedure)
+            const matchesProcedure = selectedProcedure === "Todos" ? true : (provider as Provider).procedures?.includes(selectedProcedure)
 
             return matchesCategory && matchesLocation && matchesProcedure
         })
@@ -179,7 +178,7 @@ function DiscoverContent() {
                                         </ul>
                                     ) : (
                                         <div className="p-4 text-center text-sm text-slate-500">
-                                            No se encontraron aliados para "{searchQuery}"
+                                            No se encontraron aliados para &quot;{searchQuery}&quot;
                                         </div>
                                     )}
                                 </div>
@@ -187,7 +186,7 @@ function DiscoverContent() {
                         </div>
 
                         <div className="flex flex-1 gap-2">
-                            <Select value={selectedCategory} onValueChange={(val: any) => setSelectedCategory(val === "todas" ? "" : val)}>
+                            <Select value={selectedCategory} onValueChange={(val: string) => setSelectedCategory(val === "todas" ? "" : val)}>
                                 <SelectTrigger className="h-11 bg-slate-50 border-slate-200 rounded-xl min-w-[150px]">
                                     <div className="flex items-center gap-2 font-semibold text-slate-700">
                                         <List className="h-4 w-4 text-[#8C65C9]" />
@@ -201,7 +200,7 @@ function DiscoverContent() {
                                     ))}
                                 </SelectContent>
                             </Select>
-                            <Select value={selectedCountry} onValueChange={(val: any) => {
+                            <Select value={selectedCountry} onValueChange={(val: "CO" | "PE") => {
                                 setSelectedCountry(val)
                                 setSelectedDepartment("Todas")
                             }}>
@@ -386,7 +385,7 @@ function DiscoverContent() {
                         </h1>
                         <div className="flex items-center gap-4">
                             <div className="flex items-center gap-2">
-                                <span className={`text-sm font-semibold ${isGrouped ? 'text-slate-900' : 'text-slate-500'}`}>Agrupapor por Marca</span>
+                                <span className={`text-sm font-semibold ${isGrouped ? 'text-slate-900' : 'text-slate-500'}`}>Agrupar por Empresa</span>
                                 <button
                                     onClick={() => setIsGrouped(!isGrouped)}
                                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8C65C9] focus-visible:ring-offset-2 ${isGrouped ? 'bg-[#8C65C9]' : 'bg-slate-300'}`}
@@ -432,55 +431,21 @@ function DiscoverContent() {
                         )
                     ) : (
                         <div className="relative h-[600px] w-full rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white bg-slate-200">
-                            {/* Mock Interactive Map */}
-                            <div className="absolute inset-0 bg-[url('https://maps.googleapis.com/maps/api/staticmap?center=4.671,-74.053&zoom=13&size=1200x600&scale=2&style=feature:all|element:labels|visibility:on&style=feature:geometry|color:0xf5f5f5&style=feature:water|color:0xe9e9e9')] bg-cover bg-center opacity-80" />
-                            <div className="absolute inset-0 bg-gradient-to-tr from-[#4C7DFF]/5 to-[#8C65C9]/5 pointer-events-none" />
-
-                            {/* Fixed Overlay Tools */}
-                            <div className="absolute top-6 left-6 flex flex-col gap-2 z-20">
-                                <div className="bg-white p-3 rounded-2xl shadow-xl flex flex-col gap-3">
-                                    <button className="h-8 w-8 rounded-lg bg-slate-100 flex items-center justify-center font-bold text-slate-700 hover:bg-slate-200 transition-colors">+</button>
-                                    <hr className="border-slate-100" />
-                                    <button className="h-8 w-8 rounded-lg bg-slate-100 flex items-center justify-center font-bold text-slate-700 hover:bg-slate-200 transition-colors">-</button>
+                            {filteredProviders.length > 0 ? (
+                                <InteractiveMap providers={filteredProviders as Provider[]} />
+                            ) : (
+                                <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50 opacity-80 backdrop-blur-sm z-30">
+                                    <h3 className="text-xl font-bold text-slate-800">No encontramos proveedores de mapas</h3>
+                                    <p className="text-sm text-slate-500">Intenta remover los filtros para ubicar doctores en el área.</p>
                                 </div>
-                                <div className="bg-white p-3 rounded-2xl shadow-xl">
-                                    <MapPin className="h-6 w-6 text-[#4C7DFF]" />
-                                </div>
-                            </div>
+                            )}
 
-                            {/* Simulated Markers */}
-                            {filteredProviders.map((provider) => (
-                                <div
-                                    key={provider.id}
-                                    className="absolute group z-10 cursor-pointer"
-                                    style={{
-                                        top: `${Math.random() * 60 + 20}%`,
-                                        left: `${Math.random() * 60 + 20}%`
-                                    }}
-                                >
-                                    <div className="relative">
-                                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-white px-3 py-1.5 rounded-xl shadow-2xl scale-0 group-hover:scale-100 transition-all origin-bottom pointer-events-none min-w-[150px]">
-                                            <p className="text-[9px] font-black text-[#8C65C9] uppercase">{provider.specialty}</p>
-                                            <p className="font-bold text-xs text-slate-900">{provider.name}</p>
-                                            <div className="flex items-center mt-1 gap-1">
-                                                <Star className="h-2 w-2 text-yellow-500 fill-yellow-500" />
-                                                <span className="text-[8px] font-bold">{provider.rating}</span>
-                                            </div>
-                                        </div>
-                                        <div className="h-10 w-10 bg-white rounded-2xl shadow-xl flex items-center justify-center border-2 border-[#4C7DFF] group-hover:scale-110 transition-transform">
-                                            <MapPin className="h-5 w-5 text-[#4C7DFF] fill-[#4C7DFF]/10" />
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-
-                            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20">
+                            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
                                 <div className="bg-white/90 backdrop-blur-md px-6 py-3 rounded-full shadow-2xl flex items-center gap-4">
                                     <div className="flex items-center gap-2">
-                                        <div className="h-3 w-3 rounded-full bg-[#4C7DFF]" />
-                                        <span className="text-xs font-bold text-slate-700">{filteredProviders.length} Proveedores en el área</span>
+                                        <div className="h-3 w-3 rounded-full bg-[#4C7DFF] animate-pulse" />
+                                        <span className="text-xs font-bold text-slate-700">{filteredProviders.length} Proveedores mostrados</span>
                                     </div>
-                                    <Button variant="outline" className="h-8 rounded-full text-[10px] font-bold border-slate-200">Rebuscar en esta área</Button>
                                 </div>
                             </div>
                         </div>

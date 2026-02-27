@@ -3,6 +3,7 @@ import nodemailer from 'nodemailer';
 import fs from "fs";
 import path from "path";
 import { appendToSheet, AuditRecord } from '@/lib/google-sheets';
+import { isTrustedOrigin } from '@/lib/rate-limit';
 
 // --- Interfaces ---
 interface UserPayload {
@@ -187,6 +188,15 @@ async function logToGoogleSheets(payload: AppointmentRequestPayload) {
 
 export async function POST(req: Request) {
     try {
+        // Bloquear bots o solicitudes de orígenes desconocidos (Postman, scripts)
+        // Casteo requerido porque Request nativo de fetch/Next App Router es mínimamente compatible con NextRequest
+        if (!isTrustedOrigin(req as any)) {
+            return NextResponse.json(
+                { message: 'Permiso denegado. Origen desconocido o no autorizado.' },
+                { status: 403 }
+            );
+        }
+
         const body: AppointmentRequestPayload = await req.json();
 
         if (!body.user || !body.provider || !body.providerEmail) {

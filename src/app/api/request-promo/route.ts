@@ -3,6 +3,7 @@ import nodemailer from 'nodemailer';
 import fs from "fs";
 import path from "path";
 import { appendToSheet, AuditRecord } from '@/lib/google-sheets';
+import { isTrustedOrigin } from '@/lib/rate-limit';
 
 // --- Interfaces ---
 interface UserPayload {
@@ -176,6 +177,14 @@ async function logPromoToGoogleSheets(payload: PromoRequestPayload) {
 
 export async function POST(req: Request) {
     try {
+        // Bloquear bots o solicitudes de orígenes desconocidos (Postman, scripts)
+        if (!isTrustedOrigin(req as any)) {
+            return NextResponse.json(
+                { message: 'Permiso denegado. Origen desconocido o no autorizado.' },
+                { status: 403 }
+            );
+        }
+
         const body: PromoRequestPayload = await req.json();
 
         if (!body.user || !body.promo || !body.providerEmail) {

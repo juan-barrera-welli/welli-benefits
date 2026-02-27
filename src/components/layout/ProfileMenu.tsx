@@ -43,7 +43,7 @@ export function ProfileMenu({ user, onUserUpdate }: ProfileMenuProps) {
         router.push("/")
     }
 
-    const handleSaveSettings = () => {
+    const handleSaveSettings = async () => {
         const updatedUser = {
             ...user,
             nombre,
@@ -52,10 +52,25 @@ export function ProfileMenu({ user, onUserUpdate }: ProfileMenuProps) {
             empresa,
             foto
         }
+
+        // Optimistic UI update
         localStorage.setItem("welli_user", JSON.stringify(updatedUser))
         onUserUpdate(updatedUser)
         setIsEditing(false)
         setIsSettingsOpen(false)
+
+        try {
+            await fetch('/api/update-user', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    documentNumber: user?.numero_doc || user?.numero_documento || "",
+                    newEmail: correo
+                })
+            });
+        } catch (error) {
+            console.error("Failed to sync profile changes with server:", error);
+        }
     }
 
     const handleCancelOptions = () => {
@@ -182,8 +197,8 @@ export function ProfileMenu({ user, onUserUpdate }: ProfileMenuProps) {
                                     id="nombre"
                                     value={nombre}
                                     onChange={(e) => setNombre(e.target.value)}
-                                    disabled={!isEditing}
-                                    className={`rounded-xl border-slate-200 focus-visible:ring-[#8C65C9] ${!isEditing ? "bg-slate-50 text-slate-500" : ""}`}
+                                    disabled={true}
+                                    className="rounded-xl border-slate-200 bg-slate-50 text-slate-500"
                                 />
                             </div>
                             <div className="flex flex-col gap-2">
@@ -192,8 +207,8 @@ export function ProfileMenu({ user, onUserUpdate }: ProfileMenuProps) {
                                     id="numero"
                                     value={numero}
                                     onChange={(e) => setNumero(e.target.value)}
-                                    disabled={!isEditing}
-                                    className={`rounded-xl border-slate-200 focus-visible:ring-[#8C65C9] ${!isEditing ? "bg-slate-50 text-slate-500" : ""}`}
+                                    disabled={true}
+                                    className="rounded-xl border-slate-200 bg-slate-50 text-slate-500"
                                 />
                             </div>
                             <div className="flex flex-col gap-2">
