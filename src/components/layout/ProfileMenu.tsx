@@ -231,21 +231,37 @@ export function ProfileMenu({ user, onUserUpdate }: ProfileMenuProps) {
                                 Cancelar
                             </Button>
                         </DialogClose>
-                        {isEditing ? (
-                            <Button
-                                onClick={handleSaveSettings}
-                                className="rounded-xl bg-gradient-to-r from-[#8C65C9] to-[#4C7DFF] text-white hover:opacity-90 transition-opacity shadow-md w-full sm:w-auto"
-                            >
-                                Confirmar y Guardar
-                            </Button>
-                        ) : (
-                            <Button
-                                onClick={(e) => { e.preventDefault(); setIsEditing(true); }}
-                                className="rounded-xl bg-gradient-to-r from-[#8C65C9] to-[#4C7DFF] text-white hover:opacity-90 transition-opacity shadow-md w-full sm:w-auto"
-                            >
-                                Editar
-                            </Button>
-                        )}
+
+                        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                            {!isEditing && (
+                                <Button
+                                    variant="destructive"
+                                    onClick={() => {
+                                        setIsSettingsOpen(false);
+                                        handleLogout();
+                                    }}
+                                    className="rounded-xl w-full sm:w-auto shadow-sm flex items-center justify-center gap-2"
+                                >
+                                    <LogOut className="h-4 w-4" />
+                                    Cerrar Sesión
+                                </Button>
+                            )}
+                            {isEditing ? (
+                                <Button
+                                    onClick={handleSaveSettings}
+                                    className="rounded-xl bg-gradient-to-r from-[#8C65C9] to-[#4C7DFF] text-white hover:opacity-90 transition-opacity shadow-md w-full sm:w-auto"
+                                >
+                                    Confirmar y Guardar
+                                </Button>
+                            ) : (
+                                <Button
+                                    onClick={(e) => { e.preventDefault(); setIsEditing(true); }}
+                                    className="rounded-xl bg-gradient-to-r from-[#8C65C9] to-[#4C7DFF] text-white hover:opacity-90 transition-opacity shadow-md w-full sm:w-auto"
+                                >
+                                    Editar
+                                </Button>
+                            )}
+                        </div>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
