@@ -142,7 +142,7 @@ function DiscoverContent() {
     }, [searchQuery, selectedCategory, selectedCountry, selectedDepartment, selectedCity, selectedProcedure, isGrouped, sortOrder])
 
     return (
-        <div className="flex flex-col min-h-screen bg-slate-50 pb-20 overflow-x-hidden">
+        <div className="flex flex-col min-h-screen bg-slate-50 pb-20">
             {/* Header Search & Filters */}
             <div className="bg-white/95 backdrop-blur-xl border-b border-slate-200 sticky top-[60px] md:top-[72px] z-40 px-6 py-4 shadow-sm transition-all">
                 <div className="max-w-7xl mx-auto space-y-4">
@@ -197,7 +197,7 @@ function DiscoverContent() {
                             )}
                         </div>
 
-                        <div className="flex flex-1 gap-2">
+                        <div className="flex flex-1 flex-wrap gap-3">
                             <Select value={selectedCategory} onValueChange={(val: string) => setSelectedCategory(val === "todas" ? "" : val)}>
                                 <SelectTrigger className="h-11 bg-slate-50 border-slate-200 rounded-xl min-w-[150px]">
                                     <div className="flex items-center gap-2 font-semibold text-slate-700">
