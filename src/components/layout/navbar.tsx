@@ -89,6 +89,9 @@ export const Navbar = memo(function Navbar({ backHref, showMenu = true, classNam
                         <Link href="/promociones" className={`text-sm transition-colors ${pathname === '/promociones' ? 'text-[#8C65C9] font-black' : 'text-slate-600 font-semibold hover:text-[#8C65C9]'}`}>
                             Promociones
                         </Link>
+                        <Link href="/mis-solicitudes" className={`text-sm transition-colors ${pathname === '/mis-solicitudes' ? 'text-[#8C65C9] font-black' : 'text-slate-600 font-semibold hover:text-[#8C65C9]'}`}>
+                            Mis Solicitudes
+                        </Link>
                         <Link href="/referir" className={`text-sm transition-colors ${pathname === '/referir' ? 'text-[#8C65C9] font-black' : 'text-slate-600 font-semibold hover:text-[#8C65C9]'}`}>
                             Referir un Colega
                         </Link>
@@ -139,6 +142,7 @@ export const Navbar = memo(function Navbar({ backHref, showMenu = true, classNam
                         <Link href="/home" className={`text-lg font-bold p-2 rounded-xl transition-colors ${pathname === '/home' ? 'text-[#8C65C9] bg-slate-50' : 'text-slate-800 hover:bg-black/5'}`}>Inicio</Link>
                         <Link href="/discover" className={`text-lg font-bold p-2 rounded-xl transition-colors ${pathname === '/discover' ? 'text-[#8C65C9] bg-slate-50' : 'text-slate-800 hover:bg-black/5'}`}>Nuestros Aliados</Link>
                         <Link href="/promociones" className={`text-lg font-bold p-2 rounded-xl transition-colors ${pathname === '/promociones' ? 'text-[#8C65C9] bg-slate-50' : 'text-slate-800 hover:bg-black/5'}`}>Promociones</Link>
+                        <Link href="/mis-solicitudes" className={`text-lg font-bold p-2 rounded-xl transition-colors ${pathname === '/mis-solicitudes' ? 'text-[#8C65C9] bg-slate-50' : 'text-slate-800 hover:bg-black/5'}`}>Mis Solicitudes</Link>
                         <Link href="/referir" className={`text-lg font-bold p-2 rounded-xl transition-colors ${pathname === '/referir' ? 'text-[#8C65C9] bg-slate-50' : 'text-slate-800 hover:bg-black/5'}`}>Referir un Colega</Link>
                         <Link href="/profile" className={`text-lg font-bold p-2 rounded-xl transition-colors ${pathname === '/profile' ? 'text-[#8C65C9] bg-slate-50' : 'text-slate-800 hover:bg-black/5'}`}>Mi Perfil</Link>
                         <div className="h-px bg-black/5 my-2" />

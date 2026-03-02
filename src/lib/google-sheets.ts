@@ -43,3 +43,95 @@ export async function appendToSheet(records: AuditRecord[]) {
         }
     }
 }
+
+export interface UserRequestHistory {
+    id: string;
+    providerName: string;
+    procedureOrPromo: string;
+    category: string;
+    timestamp: string;
+    status: string; // Default to 'Enviada' / 'Procesando' since we don't have bi-directional status yet
+}
+
+/**
+ * Retrieves the request history for a specific user from the 'traker_mensajes' sheet.
+ */
+export async function getUserRequests(numeroDoc: string, email: string): Promise<UserRequestHistory[]> {
+    const { GOOGLE_SHEETS_PRIVATE_KEY, GOOGLE_SHEETS_CLIENT_EMAIL } = process.env;
+
+    if (!GOOGLE_SHEETS_PRIVATE_KEY || !GOOGLE_SHEETS_CLIENT_EMAIL) {
+        console.error('Variables de entorno de Google Sheets faltantes.');
+        return [];
+    }
+
+    try {
+        const privateKey = GOOGLE_SHEETS_PRIVATE_KEY.replace(/\\n/g, '\n');
+        const auth = new google.auth.GoogleAuth({
+            credentials: { client_email: GOOGLE_SHEETS_CLIENT_EMAIL, private_key: privateKey },
+            scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
+        });
+
+        const sheets = google.sheets({ version: 'v4', auth });
+        const SPREADSHEET_ID = '1L3ZFb04tMDWuUt85Hf_vjoF-WX8zhADscbsY3r3v9sU';
+
+        // Fetch everything from traker_mensajes
+        const response = await sheets.spreadsheets.values.get({
+            spreadsheetId: SPREADSHEET_ID,
+            range: `'traker_mensajes'!A:N`,
+        });
+
+        const rows = response.data.values;
+        if (!rows || rows.length === 0) {
+            return [];
+        }
+
+        const history: UserRequestHistory[] = [];
+
+        // Skip the header row (index 0)
+        for (let i = 1; i < rows.length; i++) {
+            const row = rows[i];
+
+            // Map columns based on payload in route.ts
+            // A: nombre
+            // B: apellido
+            // C: tipo_doc
+            // D: numero_doc (index 3)
+            // E: numero_telefono
+            // F: correo_electronico (index 5)
+            // G: empresa
+            // H: nombre_comercial (index 7)
+            // I: categoria (index 8)
+            // J: macro_sede
+            // K: procedimiento/promo descuento (index 10)
+            // L: disponibilidad
+            // M: comentarios
+            // N: time_stamp (index 13)
+
+            const rowDoc = row[3]?.toString().trim() || '';
+            const rowEmail = row[5]?.toString().trim() || '';
+
+            // Check if matches the user requesting (either by exact doc or exact email)
+            // It needs to match at least one explicitly provided identifier
+            const matchesDoc = numeroDoc && rowDoc === numeroDoc.trim();
+            const matchesEmail = email && rowEmail.toLowerCase() === email.toLowerCase().trim();
+
+            if (matchesDoc || matchesEmail) {
+                history.push({
+                    id: `req-${i}`,
+                    providerName: row[7] || 'Desconocido',
+                    category: row[8] || 'Cita médica',
+                    procedureOrPromo: row[10] || 'Consulta General',
+                    timestamp: row[13] || 'Desconocida',
+                    status: 'Completada', // The spreadsheet log implies the request was sent successfully
+                });
+            }
+        }
+
+        // Return reversed so newest are first
+        return history.reverse();
+
+    } catch (error) {
+        console.error("Failed to fetch user requests from Sheets:", error);
+        return [];
+    }
+}
