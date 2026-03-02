@@ -113,7 +113,7 @@ function DiscoverContent() {
             baseProviders = fuse.search(searchQuery.trim()).map(res => res.item);
         }
 
-        return baseProviders.filter((provider) => {
+        const filtered = baseProviders.filter((provider) => {
             const matchesCategory = selectedCategory ? provider.category === selectedCategory : true
 
             // Check if any location matches country, department, and city
@@ -127,7 +127,7 @@ function DiscoverContent() {
             const matchesProcedure = selectedProcedure === "Todos" ? true : (provider as Provider).procedures?.includes(selectedProcedure)
 
             return matchesCategory && matchesLocation && matchesProcedure
-        })
+        });
 
         // Apply sorting
         if (sortOrder === "A-Z") {

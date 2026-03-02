@@ -135,6 +135,46 @@ function generateEmailHtml(user: UserPayload, provider: ProviderPayload, procedu
 }
 
 /**
+ * Genera el cuerpo del correo en HTML para el PACIENTE (Comprobante).
+ */
+function generatePatientEmailHtml(user: UserPayload, provider: ProviderPayload, procedure: string, preferredTime: string): string {
+    const patientName = user.nombre || 'paciente';
+
+    return `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333; padding: 0; border: 1px solid #eaeaea; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);">
+        <div style="background: linear-gradient(135deg, #8C65C9 0%, #4C7DFF 100%); padding: 40px 20px; text-align: center; border-bottom: 4px solid #FFC800;">
+            <img src="cid:welli-logo" alt="Welli Benefits" style="width: 130px; height: auto; display: block; margin: 0 auto 20px auto;" onerror="this.src='https://assets-global.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg'; this.style.display='none';">
+            <h2 style="color: #ffffff; margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.5px;">¡Solicitud Recibida, ${patientName}!</h2>
+            <p style="color: #e0e7ff; font-size: 15px; margin: 12px 0 0 0;">Hemos enviado tu requerimiento médico exitosamente.</p>
+        </div>
+        
+        <div style="padding: 30px;">
+            <p style="font-size: 16px; line-height: 1.5; color: #475569; text-align: center; margin-bottom: 25px;">
+                Hola <strong>${patientName}</strong>, este correo es para confirmarte que acabamos de notificar al proveedor sobre tu interés en agendar una cita. Pronto se estarán comunicando contigo para coordinar los detalles.
+            </p>
+
+            <div style="background-color: #f8fafc; padding: 25px; border-radius: 10px; border-left: 4px solid #8C65C9; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;">
+                <h3 style="margin-top: 0; color: #1e293b; display: flex; align-items: center; gap: 8px; font-size: 18px;">
+                    Resumen de tu Solicitud
+                </h3>
+                <div style="background-color: white; padding: 15px; border-radius: 6px; margin-top: 15px; border: 1px solid #e2e8f0;">
+                    <p style="margin: 0 0 8px 0; font-size: 15px;"><strong>Clínica o Especialista:</strong> ${provider.name}</p>
+                    <p style="margin: 0 0 8px 0; font-size: 15px;"><strong>Especialidad:</strong> ${provider.specialty}</p>
+                    <p style="margin: 0 0 8px 0; font-size: 15px;"><strong>Procedimiento de Interés:</strong> <span style="background-color: #e0e7ff; padding: 2px 6px; border-radius: 4px; color: #4338ca;">${procedure || 'Consulta General'}</span></p>
+                    <p style="margin: 0 0 8px 0; font-size: 15px;"><strong>Preferencia de Horario:</strong> ${preferredTime || 'No especificada'}</p>
+                </div>
+            </div>
+
+            <div style="margin-top: 40px; text-align: center; font-size: 13px; color: #64748b; border-top: 1px dashed #cbd5e1; padding-top: 20px;">
+                <p style="margin: 0 0 5px 0;">Recuerda que puedes ver tu cupo disponible en todo momento desde tu portal.</p>
+                <p style="margin: 0;">© ${new Date().getFullYear()} Welli. Cuidando tus finanzas y tu bienestar.</p>
+            </div>
+        </div>
+    </div>
+    `;
+}
+
+/**
  * Centraliza la escritura a las dos hojas de cálculo de Google Sheets.
  */
 async function logToGoogleSheets(payload: AppointmentRequestPayload) {
@@ -237,7 +277,7 @@ export async function POST(req: Request) {
         const patientName = `${body.user.nombre || 'Paciente'} ${body.user.apellido || ''}`.trim();
         const fallbackText = `Nueva solicitud de paciente Welli para ${body.provider.name}. Paciente: ${patientName}, Contacto: ${body.user.numero_telefono || 'No'}, Cupo: $${body.user.monto_maximo || '0'}.`;
 
-        // Dispatch Email
+        // 1. Dispatch Email to Clinic/Provider
         const info = await transporter.sendMail({
             from: `"Welli Benefits Reservas" <${GMAIL_USER}>`,
             to: body.providerEmail,
@@ -250,6 +290,30 @@ export async function POST(req: Request) {
                 cid: 'welli-logo' // mismo cid usado en el src del HTML
             }]
         });
+
+        // 2. Dispatch Confirmation Email to Patient (if email exists)
+        if (body.user.correo_electronico) {
+            try {
+                const patientHtml = generatePatientEmailHtml(body.user, body.provider, body.procedure, body.preferredTime);
+                const patientFallbackText = `Hola ${patientName}, hemos recibido tu solicitud de cita para ${body.provider.name} en la especialidad de ${body.provider.specialty}. El consultorio se pondrá en contacto pronto.`;
+
+                await transporter.sendMail({
+                    from: `"Welli Benefits" <${GMAIL_USER}>`,
+                    to: body.user.correo_electronico,
+                    subject: `Tu solicitud de cita con ${body.provider.name} ha sido enviada 🩺`,
+                    text: patientFallbackText,
+                    html: patientHtml,
+                    attachments: [{
+                        filename: 'welli-logo-white.png',
+                        path: path.join(process.cwd(), 'public', 'images', 'welli-logo-white.png'),
+                        cid: 'welli-logo'
+                    }]
+                });
+                console.log('Patient confirmation email sent successfully to:', body.user.correo_electronico);
+            } catch (patientErr) {
+                console.error('Failed to send patient confirmation email. Silently continuing.', patientErr);
+            }
+        }
 
         console.log('Email sent successfully: %s', info.messageId);
 
