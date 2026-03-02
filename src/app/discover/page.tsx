@@ -131,10 +131,8 @@ function DiscoverContent() {
         // Apply sorting
         if (sortOrder === "A-Z") {
             filtered.sort((a, b) => a.name.localeCompare(b.name))
-            setIsGrouped(false); // Disable grouping when explicitly sorting to avoid confusion
         } else if (sortOrder === "Z-A") {
             filtered.sort((a, b) => b.name.localeCompare(a.name))
-            setIsGrouped(false);
         }
 
         return filtered;
