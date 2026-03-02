@@ -157,9 +157,9 @@ export default function PromocionesPage() {
                                         {/* Modal for Details */}
                                         <DialogContent className="sm:max-w-[425px] rounded-[2rem] p-0 overflow-hidden gap-0 bg-white border-0 shadow-2xl">
                                             <div className="relative h-48 bg-slate-100 w-full overflow-hidden shrink-0">
-                                                {promo.image ? (
+                                                {promo.banner || promo.image ? (
                                                     <img
-                                                        src={promo.image}
+                                                        src={promo.banner || promo.image}
                                                         alt={promo.nombre_comercial}
                                                         className="absolute inset-0 w-full h-full object-cover"
                                                         onError={(e) => {
@@ -171,7 +171,7 @@ export default function PromocionesPage() {
                                                         }}
                                                     />
                                                 ) : null}
-                                                <div className={`absolute inset-0 flex items-center justify-center text-slate-400 font-bold tracking-widest text-xl uppercase bg-slate-100/90 backdrop-blur-md ${promo.image ? 'hidden' : ''}`}>
+                                                <div className={`absolute inset-0 flex items-center justify-center text-slate-400 font-bold tracking-widest text-xl uppercase bg-slate-100/90 backdrop-blur-md ${(promo.banner || promo.image) ? 'hidden' : ''}`}>
                                                     {promo.nombre_comercial}
                                                 </div>
                                                 <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/80 to-transparent" />

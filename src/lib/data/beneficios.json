@@ -6,8 +6,8 @@
     "condiciones": "Válido solo para clientes de primera vez en Sonría Av. 68. Aplica únicamente al servicio de blanqueamiento dental. La cita incluye valoración profesional. Descuento no acumulable con otras promociones. Sujeto a disponibilidad de agenda.",
     "tipo_promocion": "50%",
     "link_promocion": "https://api.whatsapp.com/send?phone=573222721452&text=%C2%A1Hola%20Sonr%C3%ADa!%20Quiero%20conocer%20la%20promoci%C3%B3n%20",
-    "image": "/images/promotions/sonria.jpg",
-    "banner": "/images/promotions/sonria-banner.jpg"
+    "image": "/images/promotions/sonria.png",
+    "banner": "/images/promotions/sonria-banner.png"
   },
   {
     "nombre_comercial": "Unidad Odontofacial",
