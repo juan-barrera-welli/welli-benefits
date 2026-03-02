@@ -380,7 +380,7 @@ function DiscoverContent() {
                             </Select>
                         </div>
 
-                        <div className="bg-slate-100 p-1 rounded-xl flex">
+                        {/* <div className="bg-slate-100 p-1 rounded-xl flex">
                             <Button
                                 variant={viewMode === "list" ? "default" : "ghost"}
                                 size="sm"
@@ -397,7 +397,7 @@ function DiscoverContent() {
                             >
                                 <MapIcon className="h-4 w-4 mr-2" /> Mapa
                             </Button>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>
@@ -430,37 +430,37 @@ function DiscoverContent() {
                         </div>
                     </div>
 
-                    {viewMode === "list" ? (
-                        filteredProviders.length > 0 ? (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                                {filteredProviders.map((provider) => (
-                                    <ProviderCard
-                                        key={provider.id}
-                                        provider={provider}
-                                        variant="discover"
-                                        selectedCity={selectedCity}
-                                        selectedDepartment={selectedDepartment}
-                                        selectedCountry={selectedCountry}
-                                    />
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="py-24 text-center space-y-4">
-                                <div className="text-7xl animate-bounce">�️</div>
-                                <h3 className="text-xl font-bold text-slate-900">No encontramos proveedores aquí</h3>
-                                <p className="text-slate-500 max-w-sm mx-auto">
-                                    Aún no tenemos cobertura en esta zona, pero estamos creciendo rápido. Intenta otra ubicación.
-                                </p>
-                                <Button
-                                    variant="link"
-                                    className="text-[#4C7DFF] font-bold text-lg"
-                                    onClick={() => { setSearchQuery(""); setSelectedCategory(""); setSelectedDepartment("Todas") }}
-                                >
-                                    Ver todos los resultados
-                                </Button>
-                            </div>
-                        )
+                    {/* {viewMode === "list" ? ( */}
+                    {filteredProviders.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                            {filteredProviders.map((provider) => (
+                                <ProviderCard
+                                    key={provider.id}
+                                    provider={provider}
+                                    variant="discover"
+                                    selectedCity={selectedCity}
+                                    selectedDepartment={selectedDepartment}
+                                    selectedCountry={selectedCountry}
+                                />
+                            ))}
+                        </div>
                     ) : (
+                        <div className="py-24 text-center space-y-4">
+                            <div className="text-7xl animate-bounce">🕵️</div>
+                            <h3 className="text-xl font-bold text-slate-900">No encontramos proveedores aquí</h3>
+                            <p className="text-slate-500 max-w-sm mx-auto">
+                                Aún no tenemos cobertura en esta zona, pero estamos creciendo rápido. Intenta otra ubicación.
+                            </p>
+                            <Button
+                                variant="link"
+                                className="text-[#4C7DFF] font-bold text-lg"
+                                onClick={() => { setSearchQuery(""); setSelectedCategory(""); setSelectedDepartment("Todas") }}
+                            >
+                                Ver todos los resultados
+                            </Button>
+                        </div>
+                    )}
+                    {/* ) : (
                         <div className="relative h-[600px] w-full rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white bg-slate-200">
                             {filteredProviders.length > 0 ? (
                                 <InteractiveMap providers={filteredProviders as Provider[]} />
@@ -480,7 +480,7 @@ function DiscoverContent() {
                                 </div>
                             </div>
                         </div>
-                    )}
+                    )} */}
                 </div>
             </div>
         </div >
