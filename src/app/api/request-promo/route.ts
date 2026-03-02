@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import fs from "fs";
 import path from "path";
@@ -32,28 +32,6 @@ interface PromoRequestPayload {
 }
 
 // --- Helpers ---
-
-/**
- * Intenta recuperar el teléfono y link de WA más actualizados del JSON local.
- */
-function enrichUserDataWithLocalStore(user: UserPayload): UserPayload {
-    if (!user.numero_doc) return user;
-
-    try {
-        const usersFile = path.join(process.cwd(), 'src', 'lib', 'data', 'users.json');
-        if (fs.existsSync(usersFile)) {
-            const users = JSON.parse(fs.readFileSync(usersFile, 'utf8'));
-            const freshUser = users.find((u: any) => u.numero_doc === user.numero_doc);
-            if (freshUser) {
-                user.numero_telefono = freshUser.numero_telefono || user.numero_telefono;
-                user.wa_link = freshUser.wa_link || user.wa_link;
-            }
-        }
-    } catch (err) {
-        console.error("Failed to read fresh user data for promo email request:", err);
-    }
-    return user;
-}
 
 /**
  * Genera el cuerpo del correo en HTML para promociones.
@@ -179,7 +157,7 @@ async function logPromoToGoogleSheets(payload: PromoRequestPayload) {
 export async function POST(req: Request) {
     try {
         // Bloquear bots o solicitudes de orígenes desconocidos (Postman, scripts)
-        if (!isTrustedOrigin(req as any)) {
+        if (!isTrustedOrigin(req as unknown as NextRequest)) {
             return NextResponse.json(
                 { message: 'Permiso denegado. Origen desconocido o no autorizado.' },
                 { status: 403 }
@@ -195,10 +173,7 @@ export async function POST(req: Request) {
             );
         }
 
-        // Enrich user with fresh data
-        console.log("[route-promo] Enriching user data...");
-        const enrichedUser = enrichUserDataWithLocalStore(body.user);
-        body.user = enrichedUser;
+        // User is passed directly from global state, no filesystem read anymore
 
         const { GMAIL_USER, GMAIL_APP_PASSWORD } = process.env;
 
@@ -247,10 +222,11 @@ export async function POST(req: Request) {
 
         return NextResponse.json({ success: true, messageId: info.messageId }, { status: 200 });
 
-    } catch (error: any) {
-        console.error('Error processing promo request:', error);
+    } catch (error: unknown) {
+        const err = error as Error;
+        console.error('Error processing promo request:', err);
         return NextResponse.json(
-            { message: 'Failed to process promo request.', error: error.message },
+            { message: 'Failed to process promo request.', error: err.message },
             { status: 500 }
         );
     }

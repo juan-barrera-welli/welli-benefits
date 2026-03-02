@@ -23,7 +23,7 @@ export function getClientIp(req: NextRequest): string {
  * Registra y valida un intento fallido para una IP. 
  * Bloquea por 5 minutos después de 5 intentos seguidos fallidos desde la misma red.
  */
-export function checkRateLimitByIp(ip: string, maxAttempts = 5, penaltyMinutes = 5): { blocked: boolean, remaining: number, waitMinutes?: number } {
+export function checkRateLimitByIp(ip: string, maxAttempts = 5): { blocked: boolean, remaining: number, waitMinutes?: number } {
     const now = Date.now();
     const tracker = ipAccessLimits[ip] || { attempts: 0, blockedUntil: null };
 

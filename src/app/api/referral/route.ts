@@ -4,7 +4,7 @@ import nodemailer from 'nodemailer';
 export async function POST(req: Request) {
     try {
         const body = await req.json();
-        const { referrerName, colleagueName, colleagueEmail, colleaguePhone } = body;
+        const { referrerName, colleagueName, colleagueEmail } = body;
 
         // Basic validation
         if (!referrerName || !colleagueName || !colleagueEmail) {
@@ -71,10 +71,11 @@ export async function POST(req: Request) {
         console.log('Referral email sent successfully: %s', info.messageId);
 
         return NextResponse.json({ success: true, messageId: info.messageId }, { status: 200 });
-    } catch (error: any) {
-        console.error('Error sending referral email:', error);
+    } catch (error: unknown) {
+        const err = error as Error;
+        console.error('Error sending referral email:', err);
         return NextResponse.json(
-            { message: 'Error al enviar la invitación.', error: error.message },
+            { message: 'Error al enviar la invitación.', error: err.message },
             { status: 500 }
         );
     }

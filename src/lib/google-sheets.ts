@@ -38,8 +38,9 @@ export async function appendToSheet(records: AuditRecord[]) {
             });
             console.log(`Successfully appended to ${record.sheetName}`);
         } catch (error: unknown) {
-            const err = error as any;
-            console.error(`Error appending to ${record.sheetName}:`, err?.response?.data || err?.message || error);
+            const err = error as Error;
+            // Since error structure depends on googleapis, default to standard standard error format
+            console.error(`Error appending to ${record.sheetName}:`, err.message || String(error));
         }
     }
 }
@@ -142,7 +143,7 @@ export async function getUserRequests(numeroDoc: string, email: string): Promise
  * Autentica un usuario validando su cédula y contraseña contra "Usuarios welli benefits" en Google Sheets.
  * Retorna el objeto del usuario preparado para la sesión si es exitoso, o null si falla.
  */
-export async function authenticateUser(documento: string, contrasena: string): Promise<any | null> {
+export async function authenticateUser(documento: string, contrasena: string): Promise<Record<string, string> | null> {
     const { GOOGLE_SHEETS_PRIVATE_KEY, GOOGLE_SHEETS_CLIENT_EMAIL } = process.env;
 
     if (!GOOGLE_SHEETS_PRIVATE_KEY || !GOOGLE_SHEETS_CLIENT_EMAIL) {

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { Navbar } from "@/components/layout/navbar"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Clock, Calendar, Stethoscope, Tag, CheckCircle2 } from "lucide-react"
@@ -20,7 +19,7 @@ interface UserRequest {
 
 export default function MisSolicitudesPage() {
     const router = useRouter()
-    const [user, setUser] = useState<any>(null)
+    const [user, setUser] = useState<Record<string, unknown> | null>(null)
     const [requests, setRequests] = useState<UserRequest[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -42,7 +41,7 @@ export default function MisSolicitudesPage() {
         }
     }, [router])
 
-    const fetchUserRequests = async (userData: any) => {
+    const fetchUserRequests = async (userData: Record<string, unknown>) => {
         setIsLoading(true)
         setError(null)
 
@@ -64,9 +63,10 @@ export default function MisSolicitudesPage() {
             } else {
                 throw new Error(json.message || "Error al procesar los datos.")
             }
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error(err)
-            setError(err.message || "No se pudo cargar tu historial de solicitudes en este momento.")
+            const errorObj = err as Error;
+            setError(errorObj.message || "No se pudo cargar tu historial de solicitudes en este momento.")
         } finally {
             setIsLoading(false)
         }
@@ -179,7 +179,7 @@ export default function MisSolicitudesPage() {
                                                 </p>
                                                 {req.comments && (
                                                     <p className="text-sm text-slate-500 italic mt-1 bg-white/50 p-2 rounded-md border border-slate-100">
-                                                        "{req.comments}"
+                                                        &quot;{req.comments}&quot;
                                                     </p>
                                                 )}
                                             </div>

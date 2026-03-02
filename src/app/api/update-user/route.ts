@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
 import { google } from "googleapis";
 import { isTrustedOrigin } from "@/lib/rate-limit";
 
@@ -22,20 +20,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Faltan datos requeridos (documentNumber)." }, { status: 400 });
         }
 
-        // 1. UPDATE LOCAL CACHE first so UI feels fast and relogins work instantly
-        const usersFile = path.join(process.cwd(), 'src', 'lib', 'data', 'users.json');
-        let users: Record<string, unknown>[] = [];
-        if (fs.existsSync(usersFile)) {
-            users = JSON.parse(fs.readFileSync(usersFile, 'utf8'));
-            const userIndex = users.findIndex(u => u.numero_doc === documentNumber);
-            if (userIndex !== -1) {
-                if (newEmail !== undefined) users[userIndex].correo_electronico = newEmail;
-                if (newFoto !== undefined) users[userIndex].foto = newFoto;
-                fs.writeFileSync(usersFile, JSON.stringify(users, null, 2));
-            }
-        }
-
-        // 2. UPDATE GOOGLE SHEETS IN BACKGROUND
+        // UPDATE GOOGLE SHEETS IN BACKGROUND
         const auth = new google.auth.GoogleAuth({
             credentials: {
                 client_email: process.env.GOOGLE_SHEETS_CLIENT_EMAIL,
@@ -93,7 +78,7 @@ export async function POST(req: NextRequest) {
                 return letter;
             };
 
-            const updates: Promise<any>[] = [];
+            const updates: Promise<unknown>[] = [];
 
             if (newEmail !== undefined && emailIndex !== -1) {
                 const colLetter = getColumnLetter(emailIndex);

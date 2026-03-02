@@ -98,7 +98,7 @@ export interface ProviderData {
 }
 
 // Genera un objeto consolidando las sedes por "Macro Sede"
-const groupProviders = (data: any[]): ProviderData[] => {
+const groupProviders = (data: ProviderData[]): ProviderData[] => {
     const macroMap = new Map<string, ProviderData>();
 
     data.forEach(provider => {

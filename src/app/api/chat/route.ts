@@ -56,6 +56,7 @@ export async function POST(req: NextRequest) {
         }
 
         // Format previous messages for AI Studio
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const formattedMessages = messages.map((msg: any) => {
             // Handle function call responses from previous turns if any
             if (msg.functionResponse) {
@@ -96,6 +97,7 @@ export async function POST(req: NextRequest) {
         }
 
         const requestParts = (lastMessage.parts[0] && "text" in lastMessage.parts[0])
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             ? (lastMessage.parts[0] as any).text
             : lastMessage.parts;
 
@@ -115,6 +117,7 @@ export async function POST(req: NextRequest) {
 
         if (functionCall && functionCall.name === "findProviders") {
             // The model wants to search for providers
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const args = functionCall.args as any;
             return NextResponse.json({
                 type: "tool_call",
@@ -138,8 +141,9 @@ export async function POST(req: NextRequest) {
             text: textResponse,
         });
 
-    } catch (error: any) {
-        console.error("Error in AI Studio Chat API:", error);
-        return NextResponse.json({ error: error.message || "Internal server error" }, { status: 500 });
+    } catch (error: unknown) {
+        const err = error as Error;
+        console.error("Error in AI Studio Chat API:", err);
+        return NextResponse.json({ error: err.message || "Internal server error" }, { status: 500 });
     }
 }

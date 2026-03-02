@@ -1,11 +1,11 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getUserRequests } from '@/lib/google-sheets';
 import { isTrustedOrigin } from '@/lib/rate-limit';
 
 export async function POST(req: Request) {
     try {
         // Bloquear bots o solicitudes de orígenes desconocidos (Postman, scripts)
-        if (!isTrustedOrigin(req as any)) {
+        if (!isTrustedOrigin(req as unknown as NextRequest)) {
             return NextResponse.json(
                 { message: 'Permiso denegado. Origen desconocido o no autorizado.' },
                 { status: 403 }
@@ -28,10 +28,11 @@ export async function POST(req: Request) {
 
         return NextResponse.json({ success: true, count: history.length, data: history }, { status: 200 });
 
-    } catch (error: any) {
-        console.error('Error fetching user requests:', error);
+    } catch (error: unknown) {
+        const err = error as Error;
+        console.error('Error fetching user requests:', err);
         return NextResponse.json(
-            { message: 'Failed to fetch user requests.', error: error.message },
+            { message: 'Failed to fetch user requests.', error: err.message },
             { status: 500 }
         );
     }

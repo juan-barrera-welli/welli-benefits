@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs";
 import { getClientIp, checkRateLimitByIp, incrementRateLimit, clearRateLimit, isTrustedOrigin } from "@/lib/rate-limit";
 import { authenticateUser } from "@/lib/google-sheets";
 
