@@ -41,6 +41,7 @@ function DiscoverContent() {
     const [selectedProcedure, setSelectedProcedure] = useState("Todos")
     const [viewMode, setViewMode] = useState<"list" | "map">("list")
     const [isGrouped, setIsGrouped] = useState(true)
+    const [sortOrder, setSortOrder] = useState<"A-Z" | "Z-A" | "Relevancia">("Relevancia")
 
     const searchSuggestions = searchQuery.length >= 3
         ? new Fuse(PROVIDERS, {
@@ -127,12 +128,23 @@ function DiscoverContent() {
 
             return matchesCategory && matchesLocation && matchesProcedure
         })
-    }, [searchQuery, selectedCategory, selectedCountry, selectedDepartment, selectedCity, selectedProcedure, isGrouped])
+
+        // Apply sorting
+        if (sortOrder === "A-Z") {
+            filtered.sort((a, b) => a.name.localeCompare(b.name))
+            setIsGrouped(false); // Disable grouping when explicitly sorting to avoid confusion
+        } else if (sortOrder === "Z-A") {
+            filtered.sort((a, b) => b.name.localeCompare(a.name))
+            setIsGrouped(false);
+        }
+
+        return filtered;
+    }, [searchQuery, selectedCategory, selectedCountry, selectedDepartment, selectedCity, selectedProcedure, isGrouped, sortOrder])
 
     return (
-        <div className="flex flex-col min-h-screen bg-slate-50 pb-20">
+        <div className="flex flex-col min-h-screen bg-slate-50 pb-20 overflow-x-hidden">
             {/* Header Search & Filters */}
-            <div className="bg-white border-b border-slate-200 sticky top-[65px] z-30 px-6 py-4 shadow-sm">
+            <div className="bg-white/95 backdrop-blur-xl border-b border-slate-200 sticky top-[60px] md:top-[72px] z-40 px-6 py-4 shadow-sm transition-all">
                 <div className="max-w-7xl mx-auto space-y-4">
                     <div className="flex flex-col md:flex-row gap-4">
                         <div className="relative flex-[2] z-40">
@@ -213,6 +225,20 @@ function DiscoverContent() {
                                 <SelectContent className="rounded-xl">
                                     <SelectItem value="CO">🇨🇴 Colombia</SelectItem>
                                     <SelectItem value="PE">🇵🇪 Perú</SelectItem>
+                                </SelectContent>
+                            </Select>
+
+                            <Select value={sortOrder} onValueChange={(val: any) => setSortOrder(val)}>
+                                <SelectTrigger className="h-11 bg-slate-50 border-slate-200 rounded-xl min-w-[140px]">
+                                    <div className="flex items-center gap-2 font-semibold text-slate-700">
+                                        <SlidersHorizontal className="h-4 w-4 text-[#8C65C9]" />
+                                        <SelectValue placeholder="Ordenar" />
+                                    </div>
+                                </SelectTrigger>
+                                <SelectContent className="rounded-xl">
+                                    <SelectItem value="Relevancia">Relevancia</SelectItem>
+                                    <SelectItem value="A-Z">Alfabético (A-Z)</SelectItem>
+                                    <SelectItem value="Z-A">Alfabético (Z-A)</SelectItem>
                                 </SelectContent>
                             </Select>
 
@@ -379,10 +405,15 @@ function DiscoverContent() {
             {/* Main Content */}
             <div className="px-6 py-8 flex-1">
                 <div className="max-w-7xl mx-auto h-full flex flex-col space-y-6">
-                    <div className="flex items-center justify-between">
-                        <h1 className="text-xl font-bold text-slate-900">
-                            {filteredProviders.length} Proveedores en {selectedDepartment === "Todas" ? (selectedCountry === "CO" ? "Colombia" : "Perú") : selectedDepartment}
-                        </h1>
+                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                        <div className="space-y-1">
+                            <h1 className="text-2xl font-black text-slate-900 flex items-center gap-2">
+                                {selectedCategory ? CATEGORIES.find(c => c.id === selectedCategory)?.name : "Todas las Categorías"}
+                            </h1>
+                            <p className="text-sm font-bold text-slate-500">
+                                {filteredProviders.length} Aliados en {selectedDepartment === "Todas" ? (selectedCountry === "CO" ? "Colombia" : "Perú") : selectedDepartment}
+                            </p>
+                        </div>
                         <div className="flex items-center gap-4">
                             <div className="flex items-center gap-2">
                                 <span className={`text-sm font-semibold ${isGrouped ? 'text-slate-900' : 'text-slate-500'}`}>Agrupar por Empresa</span>
