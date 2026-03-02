@@ -23,15 +23,33 @@ export const Navbar = memo(function Navbar({ backHref, showMenu = true, classNam
     const isLoginPage = pathname === "/"
 
     useEffect(() => {
-        const storedUser = localStorage.getItem("welli_user")
-        if (storedUser) {
-            try {
-                setUser(JSON.parse(storedUser))
-            } catch (e) {
-                console.error("Error parsing user context", e)
+        const loadUser = () => {
+            const storedUser = localStorage.getItem("welli_user")
+            if (storedUser) {
+                try {
+                    setUser(JSON.parse(storedUser))
+                } catch (e) {
+                    console.error("Error parsing user context", e)
+                }
+            } else {
+                setUser(null)
             }
+            setIsLoading(false)
         }
-        setIsLoading(false)
+
+        // Initial load
+        loadUser()
+
+        // Listen for standard storage events (e.g. login/logout from another tab)
+        window.addEventListener("storage", loadUser)
+
+        // Listen for our custom login event (triggered in the same tab)
+        window.addEventListener("welli_user_updated", loadUser)
+
+        return () => {
+            window.removeEventListener("storage", loadUser)
+            window.removeEventListener("welli_user_updated", loadUser)
+        }
     }, [])
 
     return (

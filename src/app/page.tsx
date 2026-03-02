@@ -49,6 +49,10 @@ export default function LoginPage() {
       if (data.success && data.user) {
         // Save basic session context
         localStorage.setItem("welli_user", JSON.stringify(data.user))
+
+        // Notify other components (like Navbar) that user explicitly logged in
+        window.dispatchEvent(new Event("welli_user_updated"))
+
         router.push("/home")
       }
     } catch (err) {
