@@ -147,7 +147,7 @@ function DiscoverContent() {
             <div className="bg-white/95 backdrop-blur-xl border-b border-slate-200 sticky top-[60px] md:top-[72px] z-40 px-6 py-4 shadow-sm transition-all">
                 <div className="max-w-7xl mx-auto space-y-4">
                     <div className="flex flex-col md:flex-row gap-4">
-                        <div className="relative flex-[2] z-40">
+                        <div className="relative w-full md:w-80 shrink-0 z-40">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4" />
                             <Input
                                 placeholder="Buscar clínica o especialidad..."
