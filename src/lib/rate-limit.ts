@@ -88,15 +88,20 @@ export function isTrustedOrigin(req: NextRequest): boolean {
 
     // Si tenemos origen, verificarlo
     if (origin) {
-        return allowedOrigins.some(ao => origin.startsWith(ao));
+        const allowed = allowedOrigins.some(ao => origin.startsWith(ao));
+        if (!allowed) console.error(`[isTrustedOrigin] Origin denied: ${origin}`);
+        return allowed;
     }
 
     // Si no tiene origen (postman, fetch puro), revisar referer como fallback
     if (referer) {
-        return allowedOrigins.some(ao => referer.startsWith(ao));
+        const allowed = allowedOrigins.some(ao => referer.startsWith(ao));
+        if (!allowed) console.error(`[isTrustedOrigin] Referer denied: ${referer}`);
+        return allowed;
     }
 
     // Si bloquear requests que no tengan ni origin ni referer (Típico de bots backend)
-    // Para no romper Vercel o Next Server, permitimos llamadas sin cabeceras SI la app las hace por el server internamente, pero aquí bloqueamos.
-    return false;
+    // Para no romper Vercel o Next Server, permitimos llamadas sin cabeceras SI la app las hace por el server internamente.
+    console.warn(`[isTrustedOrigin] No Origin and No Referer found. Allowing for inner-app fetch.`);
+    return true;
 }

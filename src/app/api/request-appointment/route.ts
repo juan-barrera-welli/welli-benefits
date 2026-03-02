@@ -247,6 +247,7 @@ export async function POST(req: Request) {
         }
 
         // Enrich user with fresh data
+        console.log("[route] Enriching user data...");
         const enrichedUser = enrichUserDataWithLocalStore(body.user);
         body.user = enrichedUser;
 
@@ -266,6 +267,7 @@ export async function POST(req: Request) {
         });
 
         // HTML Setup
+        console.log("[route] Generating email HTML...");
         const htmlBody = generateEmailHtml(
             body.user,
             body.provider,
@@ -278,6 +280,7 @@ export async function POST(req: Request) {
         const fallbackText = `Nueva solicitud de paciente Welli para ${body.provider.name}. Paciente: ${patientName}, Contacto: ${body.user.numero_telefono || 'No'}, Cupo: $${body.user.monto_maximo || '0'}.`;
 
         // 1. Dispatch Email to Clinic/Provider
+        console.log("[route] Waiting for transporter to send provider email...");
         const info = await transporter.sendMail({
             from: `"Welli Benefits Reservas" <${GMAIL_USER}>`,
             to: body.providerEmail,
@@ -290,6 +293,7 @@ export async function POST(req: Request) {
                 cid: 'welli-logo' // mismo cid usado en el src del HTML
             }]
         });
+        console.log("[route] Provider email sent contextually.");
 
         // 2. Dispatch Confirmation Email to Patient (if email exists)
         if (body.user.correo_electronico) {
@@ -315,10 +319,12 @@ export async function POST(req: Request) {
             }
         }
 
-        console.log('Email sent successfully: %s', info.messageId);
+        console.log('[route] Email sent successfully: %s', info.messageId);
 
         // Async auditing without blocking response
+        console.log("[route] Appending logs to Google Sheets asynchronously...");
         await logToGoogleSheets(body);
+        console.log("[route] Google Sheets log complete. Returning 200...");
 
         return NextResponse.json({ success: true, messageId: info.messageId }, { status: 200 });
 

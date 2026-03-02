@@ -195,6 +195,7 @@ export async function POST(req: Request) {
         }
 
         // Enrich user with fresh data
+        console.log("[route-promo] Enriching user data...");
         const enrichedUser = enrichUserDataWithLocalStore(body.user);
         body.user = enrichedUser;
 
@@ -214,12 +215,14 @@ export async function POST(req: Request) {
         });
 
         // HTML Setup
+        console.log("[route-promo] Generating email HTML...");
         const htmlBody = generatePromoEmailHtml(body.user, body.promo);
 
         const patientName = `${body.user.nombre || 'Paciente'} ${body.user.apellido || ''}`.trim();
         const fallbackText = `Nueva solicitud de promoción para ${body.promo.nombre_comercial}. Paciente: ${patientName}, Contacto: ${body.user.numero_telefono || 'No'}, Cupo: $${body.user.monto_maximo || '0'}. Promoción: ${body.promo.nombre_descuento}`;
 
         // Dispatch Email
+        console.log("[route-promo] Waiting for transporter to send provider email...");
         const info = await transporter.sendMail({
             from: `"Welli Benefits Promociones" <${GMAIL_USER}>`,
             to: body.providerEmail,
@@ -233,10 +236,12 @@ export async function POST(req: Request) {
             }]
         });
 
-        console.log('Promo Email sent successfully: %s', info.messageId);
+        console.log('[route-promo] Promo Email sent successfully: %s', info.messageId);
 
         // Async auditing without blocking response
+        console.log("[route-promo] Appending logs to Google Sheets asynchronously...");
         await logPromoToGoogleSheets(body);
+        console.log("[route-promo] Google Sheets log complete. Returning 200...");
 
         return NextResponse.json({ success: true, messageId: info.messageId }, { status: 200 });
 
