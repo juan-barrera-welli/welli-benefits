@@ -10,10 +10,6 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Welli Benefits - Tu bienestar corporativo",
   description: "Descubre tus beneficios, proveedores médicos y gestiona tu bienestar con Welli Benefits.",
-  icons: {
-    icon: "/images/welli-brand-logo.png",
-    apple: "/images/welli-brand-logo.png",
-  },
 };
 
 export default function RootLayout({

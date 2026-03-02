@@ -80,7 +80,8 @@ export function isTrustedOrigin(req: NextRequest): boolean {
     const allowedOrigins = [
         'http://localhost:3000',
         'http://localhost:3001',
-        'https://tu-dominio-produccion.com', // Reemplazar por dominio real cuando exista
+        'https://benefits.welli.com.co',
+        'https://welli-benefits.vercel.app',
         `https://${host}`,
         `http://${host}`
     ];
