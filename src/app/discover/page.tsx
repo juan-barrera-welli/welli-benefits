@@ -12,7 +12,6 @@ import { Badge } from "@/components/ui/badge"
 import { ProviderCard } from "@/components/ui/provider-card"
 import type { Provider } from "@/types/provider"
 import Fuse from "fuse.js"
-import { InteractiveMap } from "@/components/layout/InteractiveMap"
 import {
     Select,
     SelectContent,
@@ -40,7 +39,6 @@ function DiscoverContent() {
     const [openCity, setOpenCity] = useState(false)
     const [selectedProcedure, setSelectedProcedure] = useState("Todos")
     const [openProcedure, setOpenProcedure] = useState(false)
-    const [viewMode, setViewMode] = useState<"list" | "map">("list")
     const [isGrouped, setIsGrouped] = useState(true)
     const [sortOrder, setSortOrder] = useState<"A-Z" | "Z-A" | "Relevancia">("Relevancia")
 
@@ -213,21 +211,6 @@ function DiscoverContent() {
                                     ))}
                                 </SelectContent>
                             </Select>
-                            {/* <Select value={selectedCountry} onValueChange={(val: "CO" | "PE") => {
-                                setSelectedCountry(val)
-                                setSelectedDepartment("Todas")
-                            }}>
-                                <SelectTrigger className="h-11 bg-slate-50 border-slate-200 rounded-xl min-w-[150px]">
-                                    <div className="flex items-center gap-2 font-semibold">
-                                        <Globe className="h-4 w-4 text-[#4C7DFF]" />
-                                        <SelectValue placeholder="País" />
-                                    </div>
-                                </SelectTrigger>
-                                <SelectContent className="rounded-xl">
-                                    <SelectItem value="CO">🇨🇴 Colombia</SelectItem>
-                                    <SelectItem value="PE">🇵🇪 Perú</SelectItem>
-                                </SelectContent>
-                            </Select> */}
 
                             <Select value={sortOrder} onValueChange={(val: any) => setSortOrder(val)}>
                                 <SelectTrigger className="h-11 bg-slate-50 border-slate-200 rounded-xl min-w-[140px]">
@@ -425,25 +408,6 @@ function DiscoverContent() {
                                 </PopoverContent>
                             </Popover>
                         </div>
-
-                        {/* <div className="bg-slate-100 p-1 rounded-xl flex">
-                            <Button
-                                variant={viewMode === "list" ? "default" : "ghost"}
-                                size="sm"
-                                className={`rounded-lg px-3 ${viewMode === "list" ? "bg-white text-slate-900 shadow-sm hover:bg-white" : "text-slate-500"}`}
-                                onClick={() => setViewMode("list")}
-                            >
-                                <List className="h-4 w-4 mr-2" /> Lista
-                            </Button>
-                            <Button
-                                variant={viewMode === "map" ? "default" : "ghost"}
-                                size="sm"
-                                className={`rounded-lg px-3 ${viewMode === "map" ? "bg-white text-slate-900 shadow-sm hover:bg-white" : "text-slate-500"}`}
-                                onClick={() => setViewMode("map")}
-                            >
-                                <MapIcon className="h-4 w-4 mr-2" /> Mapa
-                            </Button>
-                        </div> */}
                     </div>
                 </div>
             </div>
@@ -476,7 +440,6 @@ function DiscoverContent() {
                         </div>
                     </div>
 
-                    {/* {viewMode === "list" ? ( */}
                     {filteredProviders.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                             {filteredProviders.map((provider) => (
@@ -506,27 +469,6 @@ function DiscoverContent() {
                             </Button>
                         </div>
                     )}
-                    {/* ) : (
-                        <div className="relative h-[600px] w-full rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white bg-slate-200">
-                            {filteredProviders.length > 0 ? (
-                                <InteractiveMap providers={filteredProviders as Provider[]} />
-                            ) : (
-                                <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50 opacity-80 backdrop-blur-sm z-30">
-                                    <h3 className="text-xl font-bold text-slate-800">No encontramos proveedores de mapas</h3>
-                                    <p className="text-sm text-slate-500">Intenta remover los filtros para ubicar doctores en el área.</p>
-                                </div>
-                            )}
-
-                            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
-                                <div className="bg-white/90 backdrop-blur-md px-6 py-3 rounded-full shadow-2xl flex items-center gap-4">
-                                    <div className="flex items-center gap-2">
-                                        <div className="h-3 w-3 rounded-full bg-[#4C7DFF] animate-pulse" />
-                                        <span className="text-xs font-bold text-slate-700">{filteredProviders.length} Proveedores mostrados</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    )} */}
                 </div>
             </div>
         </div >
