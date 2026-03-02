@@ -145,7 +145,7 @@ function DiscoverContent() {
         <div className="flex flex-col min-h-screen bg-slate-50 pb-20">
             {/* Header Search & Filters */}
             <div className="bg-white/95 backdrop-blur-xl border-b border-slate-200 sticky top-[60px] md:top-[72px] z-40 px-6 py-4 shadow-sm transition-all">
-                <div className="max-w-7xl mx-auto space-y-4">
+                <div className="w-full space-y-4">
                     <div className="flex flex-col md:flex-row gap-4">
                         <div className="relative w-full md:w-80 shrink-0 z-40">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4" />
@@ -216,7 +216,7 @@ function DiscoverContent() {
                                 setSelectedCountry(val)
                                 setSelectedDepartment("Todas")
                             }}>
-                                <SelectTrigger className="h-11 bg-slate-50 border-slate-200 rounded-xl min-w-[120px]">
+                                <SelectTrigger className="h-11 bg-slate-50 border-slate-200 rounded-xl min-w-[150px]">
                                     <div className="flex items-center gap-2 font-semibold">
                                         <Globe className="h-4 w-4 text-[#4C7DFF]" />
                                         <SelectValue placeholder="País" />
@@ -404,7 +404,7 @@ function DiscoverContent() {
 
             {/* Main Content */}
             <div className="px-6 py-8 flex-1">
-                <div className="max-w-7xl mx-auto h-full flex flex-col space-y-6">
+                <div className="w-full h-full flex flex-col space-y-6">
                     <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                         <div className="space-y-1">
                             <h1 className="text-2xl font-black text-slate-900 flex items-center gap-2">
