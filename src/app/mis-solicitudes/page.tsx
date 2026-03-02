@@ -15,6 +15,7 @@ interface UserRequest {
     category: string;
     timestamp: string;
     status: string;
+    comments?: string;
 }
 
 export default function MisSolicitudesPage() {
@@ -87,8 +88,6 @@ export default function MisSolicitudesPage() {
 
     return (
         <div className="min-h-screen bg-slate-50 flex flex-col">
-            <Navbar />
-
             <section className="bg-gradient-to-b from-[#FFC800] to-slate-50 pt-10 pb-12 px-6 text-center relative">
                 <div className="absolute top-6 left-6 md:left-12 z-20 md:top-10">
                     <Link href="/home" className="flex items-center text-slate-800 hover:text-black font-bold bg-white/60 hover:bg-white/90 shadow-sm backdrop-blur-md px-4 py-2 rounded-full transition-all">
@@ -175,9 +174,14 @@ export default function MisSolicitudesPage() {
                                                 <h3 className="text-lg font-bold text-slate-900 leading-tight">
                                                     {req.providerName}
                                                 </h3>
-                                                <p className="text-sm text-slate-600 line-clamp-2">
+                                                <p className="text-sm font-semibold text-slate-700">
                                                     {req.procedureOrPromo}
                                                 </p>
+                                                {req.comments && (
+                                                    <p className="text-sm text-slate-500 italic mt-1 bg-white/50 p-2 rounded-md border border-slate-100">
+                                                        "{req.comments}"
+                                                    </p>
+                                                )}
                                             </div>
                                         </div>
 

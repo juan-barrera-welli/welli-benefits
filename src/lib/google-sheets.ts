@@ -51,6 +51,7 @@ export interface UserRequestHistory {
     category: string;
     timestamp: string;
     status: string; // Default to 'Enviada' / 'Procesando' since we don't have bi-directional status yet
+    comments?: string;
 }
 
 /**
@@ -123,6 +124,7 @@ export async function getUserRequests(numeroDoc: string, email: string): Promise
                     procedureOrPromo: row[10] || 'Consulta General',
                     timestamp: row[13] || 'Desconocida',
                     status: 'Completada', // The spreadsheet log implies the request was sent successfully
+                    comments: row[12] || '', // Col M is index 12
                 });
             }
         }
