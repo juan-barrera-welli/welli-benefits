@@ -20,9 +20,10 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { MapPin, Star, Calendar, ShieldCheck, ArrowLeft, Heart, Share2, Info } from "lucide-react"
+import { MapPin, Star, Calendar, ShieldCheck, ArrowLeft, Heart, Share2, Info, Tag } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
+import beneficiosData from "@/lib/data/beneficios.json"
 
 interface ProviderLocation {
     name?: string;
@@ -74,6 +75,11 @@ export default function ProviderDetailsPage() {
         const matchCity = urlCity && urlCity !== "Todas" ? loc.city === urlCity : true;
         return matchDept && matchCity;
     }) : [];
+
+    const activePromos = provider ? beneficiosData.filter(promo =>
+        provider.name.toLowerCase().includes(promo.nombre_comercial.toLowerCase()) ||
+        promo.nombre_comercial.toLowerCase().includes(provider.name.toLowerCase())
+    ) : [];
 
     // Consultation Form States
     const [showConsultationForm, setShowConsultationForm] = useState(false)
@@ -241,6 +247,43 @@ export default function ProviderDetailsPage() {
                         ))}
                     </div>
                 </section>
+
+                {activePromos.length > 0 && (
+                    <section className="space-y-4">
+                        <div className="flex items-center gap-2">
+                            <Tag className="h-6 w-6 text-[#FFC800]" />
+                            <h2 className="text-xl font-bold text-slate-900">Promociones Vigentes</h2>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {activePromos.map((promo, i) => (
+                                <Link href="/promociones" key={i}>
+                                    <Card className="border border-slate-100 shadow-sm rounded-2xl p-0 overflow-hidden relative group cursor-pointer hover:border-[#FFC800] transition-colors">
+                                        <div className="flex flex-col md:flex-row h-full">
+                                            {promo.image && (
+                                                <div className="w-full md:w-32 h-32 md:h-full shrink-0 relative bg-slate-100">
+                                                    <img
+                                                        src={promo.image}
+                                                        alt={promo.nombre_descuento}
+                                                        className="absolute inset-0 w-full h-full object-cover"
+                                                    />
+                                                </div>
+                                            )}
+                                            <div className="p-4 flex flex-col justify-center flex-1 space-y-2 bg-white">
+                                                <span className="inline-block bg-[#FFC800]/10 text-[#E6B400] text-xs font-black uppercase tracking-wider px-2 py-1 rounded-md self-start">
+                                                    {promo.tipo_promocion} DCTO
+                                                </span>
+                                                <h3 className="font-bold text-slate-900 leading-tight line-clamp-2">
+                                                    {promo.nombre_descuento}
+                                                </h3>
+                                                <p className="text-xs text-slate-500 font-medium">Click para ver detalles</p>
+                                            </div>
+                                        </div>
+                                    </Card>
+                                </Link>
+                            ))}
+                        </div>
+                    </section>
+                )}
 
                 <section className="space-y-4" id="ubicaciones">
                     <h2 className="text-xl font-bold text-slate-900">Ubicaciones</h2>

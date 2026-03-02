@@ -4,6 +4,7 @@ import fs from "fs";
 import path from "path";
 import { appendToSheet, AuditRecord } from '@/lib/google-sheets';
 import { isTrustedOrigin } from '@/lib/rate-limit';
+import { WELLI_LOGO_BASE64 } from '@/lib/data/logoBase64';
 
 // --- Interfaces ---
 interface UserPayload {
@@ -231,7 +232,8 @@ export async function POST(req: Request) {
             html: htmlBody,
             attachments: [{
                 filename: 'welli-logo-white.png',
-                path: path.join(process.cwd(), 'public', 'images', 'welli-logo-white.png'),
+                content: WELLI_LOGO_BASE64,
+                encoding: 'base64',
                 cid: 'welli-logo' // mismo cid usado en el src del HTML
             }]
         });
