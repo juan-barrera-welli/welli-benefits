@@ -18,6 +18,7 @@ import { usePathname } from "next/navigation"
 export const Navbar = memo(function Navbar({ backHref, showMenu = true, className }: NavbarProps) {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const [user, setUser] = useState<any>(null)
+    const [isLoading, setIsLoading] = useState(true)
     const pathname = usePathname()
     const isLoginPage = pathname === "/"
 
@@ -30,6 +31,7 @@ export const Navbar = memo(function Navbar({ backHref, showMenu = true, classNam
                 console.error("Error parsing user context", e)
             }
         }
+        setIsLoading(false)
     }, [])
 
     return (
@@ -81,7 +83,13 @@ export const Navbar = memo(function Navbar({ backHref, showMenu = true, classNam
 
             {showMenu && !isLoginPage && (
                 <div className="flex items-center gap-2">
-                    {user ? (
+                    {isLoading ? (
+                        <div className="flex items-center bg-slate-100 rounded-full pl-4 pr-1 py-1 border border-slate-200 shadow-sm h-[40px] md:h-[48px]">
+                            <div className="hidden md:block w-20 h-6 bg-slate-200 rounded-md animate-pulse mr-3 border-r border-slate-300 pr-3" />
+                            <div className="w-16 md:w-20 h-6 bg-slate-200 rounded-md animate-pulse" />
+                            <div className="w-8 h-8 rounded-full bg-slate-200 animate-pulse ml-2 md:ml-3 shrink-0" />
+                        </div>
+                    ) : user ? (
                         <div className="flex items-center bg-slate-100 rounded-full pl-3 pr-1 md:pl-4 md:pr-1.5 py-1 md:py-1.5 border border-slate-200 shadow-sm animate-in fade-in max-w-full overflow-hidden shrink">
                             <div className="hidden md:flex flex-col mr-3 border-r border-slate-300 pr-3">
                                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-tight">Hola,</span>
