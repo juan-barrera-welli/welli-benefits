@@ -121,12 +121,12 @@ export default function HomePage() {
                                             onClick={handleSearch}
                                             className="px-4 py-3 bg-slate-50 hover:bg-slate-100 cursor-pointer text-center text-sm font-semibold text-[#4C7DFF] transition-colors"
                                         >
-                                            Ver todos los resultados para "{searchQuery}"
+                                            Ver todos los resultados para &quot;{searchQuery}&quot;
                                         </li>
                                     </ul>
                                 ) : (
                                     <div className="p-6 text-center text-slate-500">
-                                        No se encontraron aliados para "{searchQuery}"
+                                        No se encontraron aliados para &quot;{searchQuery}&quot;
                                     </div>
                                 )}
                             </div>
@@ -247,10 +247,11 @@ export default function HomePage() {
                                     <div className="relative h-56 shrink-0 overflow-hidden bg-slate-100/50">
                                         {promo.image ? (
                                             <>
-                                                <img
+                                                <Image
                                                     src={promo.image}
                                                     alt={promo.nombre_comercial}
-                                                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                                    fill
+                                                    className="object-cover group-hover:scale-105 transition-transform duration-500"
                                                     onError={(e) => {
                                                         (e.target as HTMLImageElement).style.display = 'none';
                                                         const nextSibling = (e.target as HTMLImageElement).nextElementSibling;
@@ -301,39 +302,6 @@ export default function HomePage() {
                     </div>
                 </div>
             </section>
-
-            {/* Credit Section Promo */}
-            <section className="px-6 pt-16">
-                <Card className="max-w-6xl mx-auto bg-[#FFF5CC] border border-white/30 backdrop-blur-md rounded-[3rem] p-8 md:p-16 overflow-hidden relative shadow-2xl group">
-                    {/* Interior Shimmer */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-
-                    <div className="max-w-xl space-y-6 relative z-10 text-center md:text-left">
-                        <div className="inline-block px-4 py-1.5 rounded-full bg-black/5 backdrop-blur-sm border border-black/5 text-[10px] font-black uppercase tracking-widest text-black/60 mb-2">
-                            Aprobación Inmediata
-                        </div>
-                        <h2 className="text-3xl md:text-5xl font-black text-black leading-tight tracking-tight">
-                            ¿Aún no tienes tu cupo <br className="hidden md:block" /> aprobado?
-                        </h2>
-                        <p className="text-black/70 font-bold text-lg max-w-md">
-                            Solicita tu línea de crédito Welli Benefits en menos de 5 minutos y comienza a cuidar de ti hoy mismo.
-                        </p>
-                        <Button className="bg-black/80 backdrop-blur-2xl text-white hover:bg-black font-black rounded-2xl h-16 px-10 text-xl shadow-[0_12px_40px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.2)] hover:-translate-y-1 transition-all border border-white/20 active:scale-95 group relative overflow-hidden">
-                            Solicitar mi crédito
-                        </Button>
-                    </div>
-                    {/* Decorative mascot or graphic */}
-                    <div className="absolute right-0 bottom-0 translate-x-12 translate-y-12 hidden lg:block group-hover:translate-y-6 transition-transform duration-700">
-                        <Image
-                            src="/images/welli-loader-character.png"
-                            alt="Mascot"
-                            width={320}
-                            height={320}
-                            className="drop-shadow-2xl"
-                        />
-                    </div>
-                </Card>
-            </section>
-        </div >
+        </div>
     )
 }
