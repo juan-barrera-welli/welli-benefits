@@ -80,16 +80,16 @@ export const Navbar = memo(function Navbar({ backHref, showMenu = true, classNam
 
                 {showMenu && !isLoginPage && (
                     <div className="hidden md:flex items-center gap-6 ml-4">
-                        <Link href="/home" className="text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors">
+                        <Link href="/home" className={`text-sm transition-colors ${pathname === '/home' ? 'text-[#8C65C9] font-black' : 'text-slate-600 font-semibold hover:text-slate-900'}`}>
                             Inicio
                         </Link>
-                        <Link href="/discover" className="text-sm font-semibold text-slate-600 hover:text-[#8C65C9] transition-colors">
+                        <Link href="/discover" className={`text-sm transition-colors ${pathname === '/discover' ? 'text-[#8C65C9] font-black' : 'text-slate-600 font-semibold hover:text-[#8C65C9]'}`}>
                             Nuestros Aliados
                         </Link>
-                        <Link href="/promociones" className="text-sm font-semibold text-slate-600 hover:text-[#8C65C9] transition-colors">
+                        <Link href="/promociones" className={`text-sm transition-colors ${pathname === '/promociones' ? 'text-[#8C65C9] font-black' : 'text-slate-600 font-semibold hover:text-[#8C65C9]'}`}>
                             Promociones
                         </Link>
-                        <Link href="/referir" className="text-sm font-semibold text-slate-600 hover:text-[#8C65C9] transition-colors">
+                        <Link href="/referir" className={`text-sm transition-colors ${pathname === '/referir' ? 'text-[#8C65C9] font-black' : 'text-slate-600 font-semibold hover:text-[#8C65C9]'}`}>
                             Referir un Colega
                         </Link>
                         <Link href="/assistant" className="flex items-center text-sm font-bold text-white bg-gradient-to-r from-[#8C65C9] to-[#4C7DFF] hover:shadow-md px-4 py-2 rounded-full transition-all active:scale-95 shadow-[0_4px_12px_rgba(76,125,255,0.2)]">
@@ -136,11 +136,11 @@ export const Navbar = memo(function Navbar({ backHref, showMenu = true, classNam
                         <Link href="/assistant" className="text-lg font-bold text-white flex items-center p-3 bg-gradient-to-r from-[#8C65C9] to-[#4C7DFF] shadow-md rounded-xl transition-transform active:scale-95">
                             <Sparkles className="h-5 w-5 mr-2" /> Recomendaciones con IA
                         </Link>
-                        <Link href="/home" className="text-lg font-bold text-slate-800 p-2 hover:bg-black/5 rounded-xl transition-colors">Inicio</Link>
-                        <Link href="/discover" className="text-lg font-bold text-slate-800 p-2 hover:bg-black/5 rounded-xl transition-colors">Nuestros Aliados</Link>
-                        <Link href="/promociones" className="text-lg font-bold text-slate-800 p-2 hover:bg-black/5 rounded-xl transition-colors">Promociones</Link>
-                        <Link href="/referir" className="text-lg font-bold text-slate-800 p-2 hover:bg-black/5 rounded-xl transition-colors">Referir un Colega</Link>
-                        <Link href="/profile" className="text-lg font-bold text-slate-800 p-2 hover:bg-black/5 rounded-xl transition-colors">Mi Perfil</Link>
+                        <Link href="/home" className={`text-lg font-bold p-2 rounded-xl transition-colors ${pathname === '/home' ? 'text-[#8C65C9] bg-slate-50' : 'text-slate-800 hover:bg-black/5'}`}>Inicio</Link>
+                        <Link href="/discover" className={`text-lg font-bold p-2 rounded-xl transition-colors ${pathname === '/discover' ? 'text-[#8C65C9] bg-slate-50' : 'text-slate-800 hover:bg-black/5'}`}>Nuestros Aliados</Link>
+                        <Link href="/promociones" className={`text-lg font-bold p-2 rounded-xl transition-colors ${pathname === '/promociones' ? 'text-[#8C65C9] bg-slate-50' : 'text-slate-800 hover:bg-black/5'}`}>Promociones</Link>
+                        <Link href="/referir" className={`text-lg font-bold p-2 rounded-xl transition-colors ${pathname === '/referir' ? 'text-[#8C65C9] bg-slate-50' : 'text-slate-800 hover:bg-black/5'}`}>Referir un Colega</Link>
+                        <Link href="/profile" className={`text-lg font-bold p-2 rounded-xl transition-colors ${pathname === '/profile' ? 'text-[#8C65C9] bg-slate-50' : 'text-slate-800 hover:bg-black/5'}`}>Mi Perfil</Link>
                         <div className="h-px bg-black/5 my-2" />
                         <button onClick={() => { localStorage.removeItem("welli_user"); window.location.href = "/"; }} className="text-left text-lg font-bold text-red-500 p-2 hover:bg-red-50 rounded-xl transition-colors">Cerrar Sesión</button>
                     </nav>
