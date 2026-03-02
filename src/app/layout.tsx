@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/layout/navbar";
+import { ClientAuthGuard } from "@/components/auth/ClientAuthGuard";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -29,10 +30,12 @@ export default function RootLayout({
           <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-[#8C65C9]/5 blur-[120px] rounded-full animate-pulse" style={{ animationDelay: '2s' }} />
           <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] bg-[#FFC800]/3 blur-[100px] rounded-full animate-pulse" style={{ animationDelay: '4s' }} />
         </div>
-        <Navbar />
-        <main className="relative z-10">
-          {children}
-        </main>
+        <ClientAuthGuard>
+          <Navbar />
+          <main className="relative z-10">
+            {children}
+          </main>
+        </ClientAuthGuard>
       </body>
     </html>
   );

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
-import path from "path";
 import { getClientIp, checkRateLimitByIp, incrementRateLimit, clearRateLimit, isTrustedOrigin } from "@/lib/rate-limit";
+import { authenticateUser } from "@/lib/google-sheets";
 
 // Mantenemos el bloqueo secundario por número de documento pero le damos prioridad al bloqueo absoluto por IP
 const docRateLimits: Record<string, { attempts: number; blockedUntil: number | null }> = {};
@@ -53,15 +53,11 @@ export async function POST(req: NextRequest) {
             docLimit.attempts = 0;
         }
 
-        const usersFile = path.join(process.cwd(), 'src', 'lib', 'data', 'users.json');
-        let users: any[] = [];
-        if (fs.existsSync(usersFile)) {
-            users = JSON.parse(fs.readFileSync(usersFile, 'utf8'));
-        }
+        // Query Google Sheets in real-time
+        console.log(`[login] Authenticating user doc: ${cleanDoc}`);
+        const user = await authenticateUser(cleanDoc, cleanPass);
 
-        const user = users.find((u: any) => u.numero_doc === cleanDoc && u.numero_doc !== "");
-
-        if (user && user.contraseña === cleanPass) {
+        if (user) {
             // Success - Reset rate limits
             delete docRateLimits[cleanDoc];
             clearRateLimit(ip);

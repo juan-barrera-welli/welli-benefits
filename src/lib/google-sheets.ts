@@ -137,3 +137,69 @@ export async function getUserRequests(numeroDoc: string, email: string): Promise
         return [];
     }
 }
+
+/**
+ * Autentica un usuario validando su cédula y contraseña contra "Usuarios welli benefits" en Google Sheets.
+ * Retorna el objeto del usuario preparado para la sesión si es exitoso, o null si falla.
+ */
+export async function authenticateUser(documento: string, contrasena: string): Promise<any | null> {
+    const { GOOGLE_SHEETS_PRIVATE_KEY, GOOGLE_SHEETS_CLIENT_EMAIL } = process.env;
+
+    if (!GOOGLE_SHEETS_PRIVATE_KEY || !GOOGLE_SHEETS_CLIENT_EMAIL) {
+        console.error('Variables de entorno de Google Sheets faltantes para autentiación.');
+        return null; // Fail safe
+    }
+
+    try {
+        const privateKey = GOOGLE_SHEETS_PRIVATE_KEY.replace(/\\n/g, '\n');
+        const auth = new google.auth.GoogleAuth({
+            credentials: { client_email: GOOGLE_SHEETS_CLIENT_EMAIL, private_key: privateKey },
+            scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
+        });
+
+        const sheets = google.sheets({ version: 'v4', auth });
+        const SPREADSHEET_ID = '1L3ZFb04tMDWuUt85Hf_vjoF-WX8zhADscbsY3r3v9sU';
+
+        // Fetching the user tab
+        const response = await sheets.spreadsheets.values.get({
+            spreadsheetId: SPREADSHEET_ID,
+            range: `'Usuarios welli benefits'!A:L`,
+        });
+
+        const rows = response.data.values;
+        if (!rows || rows.length === 0) return null;
+
+        // Skip header index 0
+        for (let i = 1; i < rows.length; i++) {
+            const row = rows[i];
+
+            // Expected indices based on manual check:
+            // 0: nombre, 1: apellido, 2: tipo_doc, 3: numero_doc, 4: numero_telefono, 
+            // 5: correo_electronico, 6: empresa, 7: contraseña, 8: monto_maximo, 9: wa_link
+
+            const rowDoc = row[3]?.toString().trim() || '';
+            const rowPass = row[7]?.toString().trim() || '';
+
+            if (rowDoc === documento && rowPass === contrasena) {
+                // Return structured user payload
+                return {
+                    nombre: row[0]?.toString().trim() || '',
+                    apellido: row[1]?.toString().trim() || '',
+                    tipo_doc: row[2]?.toString().trim() || '',
+                    numero_doc: row[3]?.toString().trim() || '',
+                    numero_telefono: row[4]?.toString().trim() || '',
+                    correo_electronico: row[5]?.toString().trim() || '',
+                    empresa: row[6]?.toString().trim() || '',
+                    // DO NOT leak row[7] (password)
+                    monto_maximo: row[8]?.toString().trim() || '0',
+                    wa_link: row[9]?.toString().trim() || ''
+                };
+            }
+        }
+
+        return null; // Invalid credentials case
+    } catch (error) {
+        console.error("Failed to authenticate user against Sheets:", error);
+        return null;
+    }
+}
