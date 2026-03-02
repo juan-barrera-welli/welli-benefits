@@ -65,7 +65,8 @@ export function ProfileMenu({ user, onUserUpdate }: ProfileMenuProps) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     documentNumber: user?.numero_doc || user?.numero_documento || "",
-                    newEmail: correo
+                    newEmail: correo,
+                    newFoto: foto
                 })
             });
         } catch (error) {
@@ -89,7 +90,41 @@ export function ProfileMenu({ user, onUserUpdate }: ProfileMenuProps) {
         if (file) {
             const reader = new FileReader()
             reader.onloadend = () => {
-                setFoto(reader.result as string)
+                // Compress image using Canvas
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    // Maximum dimensions
+                    const MAX_WIDTH = 150;
+                    const MAX_HEIGHT = 150;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_WIDTH) {
+                            height = Math.round((height * MAX_WIDTH) / width);
+                            width = MAX_WIDTH;
+                        }
+                    } else {
+                        if (height > MAX_HEIGHT) {
+                            width = Math.round((width * MAX_HEIGHT) / height);
+                            height = MAX_HEIGHT;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    if (ctx) {
+                        ctx.drawImage(img, 0, 0, width, height);
+                        // Convert to webp with 0.7 quality to reduce base64 size for Google Sheets
+                        const compressedBase64 = canvas.toDataURL('image/webp', 0.7);
+                        setFoto(compressedBase64);
+                    } else {
+                        setFoto(reader.result as string) // Fallback
+                    }
+                };
+                img.src = reader.result as string;
             }
             reader.readAsDataURL(file)
         }

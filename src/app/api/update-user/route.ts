@@ -16,10 +16,10 @@ export async function POST(req: NextRequest) {
         }
 
         const body = await req.json();
-        const { documentNumber, newEmail } = body;
+        const { documentNumber, newEmail, newFoto } = body;
 
-        if (!documentNumber || newEmail === undefined) {
-            return NextResponse.json({ error: "Faltan datos requeridos (documentNumber, newEmail)." }, { status: 400 });
+        if (!documentNumber) {
+            return NextResponse.json({ error: "Faltan datos requeridos (documentNumber)." }, { status: 400 });
         }
 
         // 1. UPDATE LOCAL CACHE first so UI feels fast and relogins work instantly
@@ -29,7 +29,8 @@ export async function POST(req: NextRequest) {
             users = JSON.parse(fs.readFileSync(usersFile, 'utf8'));
             const userIndex = users.findIndex(u => u.numero_doc === documentNumber);
             if (userIndex !== -1) {
-                users[userIndex].correo_electronico = newEmail;
+                if (newEmail !== undefined) users[userIndex].correo_electronico = newEmail;
+                if (newFoto !== undefined) users[userIndex].foto = newFoto;
                 fs.writeFileSync(usersFile, JSON.stringify(users, null, 2));
             }
         }
@@ -58,12 +59,14 @@ export async function POST(req: NextRequest) {
         const headers: string[] = rows[0];
         const docPattern = ["numero_doc", "documento", "cedula", "numero document", "numero_documento"];
         const emailPattern = ["correo_electronico", "correo", "email"];
+        const fotoPattern = ["foto_perfil", "foto", "fotoperfil", "profile_picture"];
 
         const docIndex = headers.findIndex(h => docPattern.includes(String(h).toLowerCase().trim()));
         const emailIndex = headers.findIndex(h => emailPattern.includes(String(h).toLowerCase().trim()));
+        const fotoIndex = headers.findIndex(h => fotoPattern.includes(String(h).toLowerCase().trim()));
 
-        if (docIndex === -1 || emailIndex === -1) {
-            console.error("Columnas requeridas no encontradas:", headers);
+        if (docIndex === -1) {
+            console.error("Columna documento requerida no encontrada:", headers);
             return NextResponse.json({ error: "Error de configuración de columnas en Sheets" }, { status: 500 });
         }
 
@@ -79,7 +82,7 @@ export async function POST(req: NextRequest) {
         if (targetRowIndex !== -1) {
             // Arrays are 0-indexed, but Sheets rows are 1-indexed. So row = targetRowIndex + 1
             const sheetRowNumber = targetRowIndex + 1;
-            // Column letters. e.g., index 0 = A, index 1 = B...
+            // Col Letter function
             const getColumnLetter = (colIndex: number) => {
                 let temp = colIndex;
                 let letter = '';
@@ -90,17 +93,31 @@ export async function POST(req: NextRequest) {
                 return letter;
             };
 
-            const colLetter = getColumnLetter(emailIndex);
-            const updateRange = `'${SHEET_NAME}'!${colLetter}${sheetRowNumber}`;
+            const updates: Promise<any>[] = [];
 
-            await sheets.spreadsheets.values.update({
-                spreadsheetId: SPREADSHEET_ID,
-                range: updateRange,
-                valueInputOption: 'USER_ENTERED',
-                requestBody: {
-                    values: [[newEmail]]
-                }
-            });
+            if (newEmail !== undefined && emailIndex !== -1) {
+                const colLetter = getColumnLetter(emailIndex);
+                const updateRange = `'${SHEET_NAME}'!${colLetter}${sheetRowNumber}`;
+                updates.push(sheets.spreadsheets.values.update({
+                    spreadsheetId: SPREADSHEET_ID,
+                    range: updateRange,
+                    valueInputOption: 'USER_ENTERED',
+                    requestBody: { values: [[newEmail]] }
+                }));
+            }
+
+            if (newFoto !== undefined && fotoIndex !== -1) {
+                const colLetter = getColumnLetter(fotoIndex);
+                const updateRange = `'${SHEET_NAME}'!${colLetter}${sheetRowNumber}`;
+                updates.push(sheets.spreadsheets.values.update({
+                    spreadsheetId: SPREADSHEET_ID,
+                    range: updateRange,
+                    valueInputOption: 'USER_ENTERED',
+                    requestBody: { values: [[newFoto]] }
+                }));
+            }
+
+            await Promise.all(updates);
 
             return NextResponse.json({ success: true, message: "Correo actualizado en Local y Google Sheets" });
         } else {
