@@ -39,6 +39,7 @@ function DiscoverContent() {
     const [selectedCity, setSelectedCity] = useState("Todas")
     const [openCity, setOpenCity] = useState(false)
     const [selectedProcedure, setSelectedProcedure] = useState("Todos")
+    const [openProcedure, setOpenProcedure] = useState(false)
     const [viewMode, setViewMode] = useState<"list" | "map">("list")
     const [isGrouped, setIsGrouped] = useState(true)
     const [sortOrder, setSortOrder] = useState<"A-Z" | "Z-A" | "Relevancia">("Relevancia")
@@ -212,7 +213,7 @@ function DiscoverContent() {
                                     ))}
                                 </SelectContent>
                             </Select>
-                            <Select value={selectedCountry} onValueChange={(val: "CO" | "PE") => {
+                            {/* <Select value={selectedCountry} onValueChange={(val: "CO" | "PE") => {
                                 setSelectedCountry(val)
                                 setSelectedDepartment("Todas")
                             }}>
@@ -226,7 +227,7 @@ function DiscoverContent() {
                                     <SelectItem value="CO">🇨🇴 Colombia</SelectItem>
                                     <SelectItem value="PE">🇵🇪 Perú</SelectItem>
                                 </SelectContent>
-                            </Select>
+                            </Select> */}
 
                             <Select value={sortOrder} onValueChange={(val: any) => setSortOrder(val)}>
                                 <SelectTrigger className="h-11 bg-slate-50 border-slate-200 rounded-xl min-w-[140px]">
@@ -248,7 +249,7 @@ function DiscoverContent() {
                                         variant="outline"
                                         role="combobox"
                                         aria-expanded={openDept}
-                                        className="h-11 bg-slate-50 border-slate-200 rounded-xl min-w-[150px] justify-between text-slate-700 font-semibold hover:bg-slate-100"
+                                        className="h-11 bg-slate-50 border-slate-200 rounded-xl min-w-[200px] justify-between text-slate-700 font-semibold hover:bg-slate-100"
                                     >
                                         <div className="flex items-center gap-2 truncate">
                                             <MapPin className="h-4 w-4 text-[#8C65C9] shrink-0" />
@@ -362,22 +363,67 @@ function DiscoverContent() {
                                 </PopoverContent>
                             </Popover>
 
-                            <Select value={selectedProcedure} onValueChange={setSelectedProcedure}>
-                                <SelectTrigger className="h-11 bg-slate-50 border-slate-200 rounded-xl min-w-[200px]">
-                                    <div className="flex items-center gap-2 font-semibold text-slate-700">
-                                        <div className="h-4 w-4 rounded-full bg-[#FFC800]/20 flex items-center justify-center">
-                                            <div className="h-1.5 w-1.5 rounded-full bg-[#FFC800]" />
+                            <Popover open={openProcedure} onOpenChange={setOpenProcedure}>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        role="combobox"
+                                        aria-expanded={openProcedure}
+                                        className="h-11 bg-slate-50 border-slate-200 rounded-xl min-w-[220px] justify-between text-slate-700 font-semibold hover:bg-slate-100"
+                                    >
+                                        <div className="flex items-center gap-2 truncate">
+                                            <div className="h-4 w-4 rounded-full bg-[#FFC800]/20 flex items-center justify-center shrink-0">
+                                                <div className="h-1.5 w-1.5 rounded-full bg-[#FFC800]" />
+                                            </div>
+                                            <span className="truncate">{selectedProcedure === "Todos" ? "Procedimiento" : selectedProcedure}</span>
                                         </div>
-                                        <SelectValue placeholder="Procedimiento" />
-                                    </div>
-                                </SelectTrigger>
-                                <SelectContent className="rounded-xl">
-                                    <SelectItem value="Todos">Procedimientos</SelectItem>
-                                    {dynamicProcedures.map(p => (
-                                        <SelectItem key={p} value={p}>{p}</SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-[280px] p-0 rounded-xl">
+                                    <Command>
+                                        <CommandInput placeholder="Buscar procedimiento..." />
+                                        <CommandList>
+                                            <CommandEmpty>No se encontró.</CommandEmpty>
+                                            <CommandGroup>
+                                                <CommandItem
+                                                    value="Todos"
+                                                    onSelect={() => {
+                                                        setSelectedProcedure("Todos")
+                                                        setOpenProcedure(false)
+                                                    }}
+                                                >
+                                                    <Check
+                                                        className={cn(
+                                                            "mr-2 h-4 w-4",
+                                                            selectedProcedure === "Todos" ? "opacity-100" : "opacity-0"
+                                                        )}
+                                                    />
+                                                    Todos los Procedimientos
+                                                </CommandItem>
+                                                {dynamicProcedures.map(proc => (
+                                                    <CommandItem
+                                                        key={proc}
+                                                        value={proc}
+                                                        onSelect={() => {
+                                                            setSelectedProcedure(proc)
+                                                            setOpenProcedure(false)
+                                                        }}
+                                                    >
+                                                        <Check
+                                                            className={cn(
+                                                                "mr-2 h-4 w-4",
+                                                                selectedProcedure === proc ? "opacity-100" : "opacity-0"
+                                                            )}
+                                                        />
+                                                        {proc}
+                                                    </CommandItem>
+                                                ))}
+                                            </CommandGroup>
+                                        </CommandList>
+                                    </Command>
+                                </PopoverContent>
+                            </Popover>
                         </div>
 
                         {/* <div className="bg-slate-100 p-1 rounded-xl flex">
