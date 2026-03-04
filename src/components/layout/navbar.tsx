@@ -95,9 +95,9 @@ export const Navbar = memo(function Navbar({ backHref, showMenu = true, classNam
                         <Link href="/referir" className={`text-sm transition-colors ${pathname === '/referir' ? 'text-[#8C65C9] font-black' : 'text-slate-600 font-semibold hover:text-[#8C65C9]'}`}>
                             Referir un Colega
                         </Link>
-                        <Link href="/assistant" className="flex items-center text-sm font-bold text-white bg-gradient-to-r from-[#8C65C9] to-[#4C7DFF] hover:shadow-md px-4 py-2 rounded-full transition-all active:scale-95 shadow-[0_4px_12px_rgba(76,125,255,0.2)]">
+                        {/* <Link href="/assistant" className="flex items-center text-sm font-bold text-white bg-gradient-to-r from-[#8C65C9] to-[#4C7DFF] hover:shadow-md px-4 py-2 rounded-full transition-all active:scale-95 shadow-[0_4px_12px_rgba(76,125,255,0.2)]">
                             <Sparkles className="h-4 w-4 mr-1.5" /> Recomendaciones con IA
-                        </Link>
+                        </Link> */}
                     </div>
                 )}
             </div>
@@ -136,9 +136,9 @@ export const Navbar = memo(function Navbar({ backHref, showMenu = true, classNam
             {isMenuOpen && (
                 <div className="absolute top-full left-0 w-full bg-white/80 backdrop-blur-xl border-b border-white/20 p-6 shadow-2xl animate-in slide-in-from-top-4 duration-300 z-50">
                     <nav className="flex flex-col gap-4">
-                        <Link href="/assistant" className="text-lg font-bold text-white flex items-center p-3 bg-gradient-to-r from-[#8C65C9] to-[#4C7DFF] shadow-md rounded-xl transition-transform active:scale-95">
+                        {/* <Link href="/assistant" className="text-lg font-bold text-white flex items-center p-3 bg-gradient-to-r from-[#8C65C9] to-[#4C7DFF] shadow-md rounded-xl transition-transform active:scale-95">
                             <Sparkles className="h-5 w-5 mr-2" /> Recomendaciones con IA
-                        </Link>
+                        </Link> */}
                         <Link href="/home" className={`text-lg font-bold p-2 rounded-xl transition-colors ${pathname === '/home' ? 'text-[#8C65C9] bg-slate-50' : 'text-slate-800 hover:bg-black/5'}`}>Inicio</Link>
                         <Link href="/discover" className={`text-lg font-bold p-2 rounded-xl transition-colors ${pathname === '/discover' ? 'text-[#8C65C9] bg-slate-50' : 'text-slate-800 hover:bg-black/5'}`}>Nuestros Aliados</Link>
                         <Link href="/promociones" className={`text-lg font-bold p-2 rounded-xl transition-colors ${pathname === '/promociones' ? 'text-[#8C65C9] bg-slate-50' : 'text-slate-800 hover:bg-black/5'}`}>Promociones</Link>
