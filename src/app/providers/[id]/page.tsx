@@ -449,7 +449,7 @@ export default function ProviderDetailsPage() {
                             <label className="text-sm font-bold text-slate-800 ml-1">
                                 ¿Qué procedimiento te interesa? *
                             </label>
-                            <Select value={selectedProcedure} onValueChange={setSelectedProcedure}>
+                            <Select value={selectedProcedure} onValueChange={(val: string | null) => val && setSelectedProcedure(val)}>
                                 <SelectTrigger className="w-full h-12 rounded-xl border-slate-200 bg-slate-50 font-medium">
                                     <SelectValue placeholder="Selecciona un procedimiento" />
                                 </SelectTrigger>
@@ -474,7 +474,7 @@ export default function ProviderDetailsPage() {
                             <label className="text-sm font-bold text-slate-800 ml-1">
                                 ¿Cuándo deseas sacar la cita? *
                             </label>
-                            <Select value={preferredTime} onValueChange={setPreferredTime}>
+                            <Select value={preferredTime} onValueChange={(val: string | null) => val && setPreferredTime(val)}>
                                 <SelectTrigger className="w-full h-12 rounded-xl border-slate-200 bg-slate-50 font-medium">
                                     <SelectValue placeholder="Selecciona una opción" />
                                 </SelectTrigger>
