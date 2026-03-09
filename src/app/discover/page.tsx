@@ -195,7 +195,7 @@ function DiscoverContent() {
                         </div>
 
                         <div className="flex flex-1 gap-2 overflow-x-auto pb-2 scrollbar-none items-center [-ms-overflow-style:'none'] [scrollbar-width:'none'] [&::-webkit-scrollbar]:hidden">
-                            <Select value={selectedCategory} onValueChange={(val: string | null) => setSelectedCategory(val === "todas" || !val ? "" : val)}>
+                            <Select value={selectedCategory} onValueChange={(val: string) => setSelectedCategory(val === "todas" ? "" : val)}>
                                 <SelectTrigger className="h-11 bg-slate-50 border-slate-200 rounded-xl min-w-[150px]">
                                     <div className="flex items-center gap-2 font-semibold text-slate-700">
                                         <List className="h-4 w-4 text-[#8C65C9]" />

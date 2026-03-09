@@ -94,7 +94,7 @@ export default function LoginPage() {
 
               <div className="space-y-2.5">
                 <Label htmlFor="id-type" className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Tipo de Identificación</Label>
-                <Select value={idType} onValueChange={(val: string | null) => val && setIdType(val)}>
+                <Select value={idType} onValueChange={setIdType}>
                   <SelectTrigger id="id-type" className="h-12 sm:h-14 bg-white/50 border-white/40 rounded-xl sm:rounded-2xl focus:ring-[#4C7DFF] backdrop-blur-sm text-slate-900 font-bold shadow-sm">
                     <SelectValue placeholder="Selecciona tipo de ID" />
                   </SelectTrigger>
